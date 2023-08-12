@@ -1,7 +1,26 @@
 ﻿// This importing of the System nameSpace to use all classes in it.
+using Microsoft.VisualBasic;
 using System;
+using System.Buffers.Text;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+using System.Diagnostics.Metrics;
+using System.Dynamic;
+using System.Linq.Expressions;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Reflection.PortableExecutable;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
+using System.Security.AccessControl;
 
 /* In C sharp we could use a static using to import any class as a static so we could use all the methods
     in this class without writing all the pass of the mehtod like when we use a System.Console class
@@ -9,10 +28,16 @@ using System.Diagnostics.CodeAnalysis;
     by just write down the name of the method.
 */
 using static System.Console;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Object = System.Object;
+using String = System.String;
+
 namespace CSharpCommands
 {
     internal class CsharpCommands
     {
+        [Obsolete]
         public static void Main(string[] args)
 
         {
@@ -570,7 +595,7 @@ namespace CSharpCommands
                 Console.WriteLine(frames[i].GetMethod().Name);
             }// return name of each method called in this programe
 
-            //----------------------------------------------------------------------------------------------------//
+            //----------------------------------------------------------------------------------------------//
             //Input Parameter To a Method.
             //Default Input Parameter.
             //Named Input Parameter.
@@ -594,16 +619,37 @@ namespace CSharpCommands
 
             //---------------------------------------------------------------------------------------------------------//
             // Pass By Reference:
-            // C# is pass by reference or value language not like java whic is pass by value only.
+            // C# is pass by reference or value language not like java which is pass by value only.
             // In swapByValue method we pass by value here so when we pass any data to this method, we just pass copy of 
-            //    this data not the original data.
+           //    this data not the original data.
+
+            /*
+              * static void swapByValue(int x, int y)
+                    {
+                        int temp = x;
+                        x = y;
+                        y = temp;
+                    }
+             */
+
             int firstNumberToSwap = 10, secondNumberToSwap = 20;
             swapByValue(firstNumberToSwap, secondNumberToSwap);
             Console.WriteLine($"firstNumberToSwap: {firstNumberToSwap},  secondNumberToSwap: {secondNumberToSwap}");
             //firstNumberToSwap: 10,  secondNumberToSwap: 20
-            // the original values for variable didn't change as the passign was by value 
+            // the original values for variable didn't change as the passign was by value. 
 
             // we could modify the function to make passing by reference like in swapByReference function.
+
+            /*
+             *  static void swapByReferenc(ref int x, ref int y)
+                {
+                    int temp = x;
+                    x = y;
+                    y = temp;
+
+                }
+             */
+
             // By using keyword "ref" before data type in parameter of method and use "ref" key word before passed variable
             //   this will make function pass by reference.
             swapByReferenc(ref firstNumberToSwap, ref secondNumberToSwap);
@@ -618,18 +664,18 @@ namespace CSharpCommands
             //------------------------------------------------------------------------------------------------------//
 
             //passing reference by value:
-            // As we know reference type store in heap and when we pass a reference type this mean we don't creat 
+            // As we know reference type stores in heap and when we pass a reference type this mean we don't creat 
             //     new object, but we just refere to the exisist object by a new name.
-            // Conseder that we have a method that sum vlaues inside int array which accept int array.
+            // Conseder that we have a method that sum vlaues inside intger array which accept int array.
             int[] arrayToBeSum = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
             Console.WriteLine(sumArray(arrayToBeSum));// 91
             /*
               * static int sumArray(int[] array)
                {
 
-                    array = new int[10];
+                    //array = new int[10];
                     Console.WriteLine(array.GetHashCode);
-                    array = new int[10];
+                    //array = new int[10];
                     int sum = 0;
                     for (int i = 0; i < array?.Length; i++)
                     {
@@ -653,7 +699,7 @@ namespace CSharpCommands
             /*
              * When you pass a reference type by reference, you use the ref keyword in both the method signature 
              *      and the method call. This means that the method receives a reference to the original reference itself.
-             * Any changes made to the reference inside the method will modify the original reference outside the method.
+             * Any changes happen to the reference inside the method will modify the original reference outside the method.
              */
             ModifyPersonNameByReference(ref arrayToBeSum);
             /// summay
@@ -706,10 +752,10 @@ namespace CSharpCommands
 
 
             // passing value by value : read only.
-            // passing vlue or reference by reference : read and write.
+            // passing value or reference by reference : read and write.
             //-------------------------------------------------------------------------------------------------//
             ///Passing by out:
-            ///passing value by value : read only, and passing vlue or reference by reference : read and write.
+            ///passing value by value : read only, and passing value or reference by reference : read and write.
             /// let's consider the following Scenario if we want to return two values form method this will never
             ///        happen as any non void mehtod could return just one value, 
             ///        but what if i want to return two values?
@@ -740,15 +786,425 @@ namespace CSharpCommands
             sumAndMultiply(firstNUmberOut, seccondNumberOut, out sumWithOut, out mulitplyWithOut);
             Console.WriteLine(sumWithOut);//24
             Console.WriteLine(mulitplyWithOut); //80
-            // we pass two uninialized parameters and we get two return values to these parameters as passing by out is write only.
-            // if we try to pass these uninialized parameters by ref it will give an error as it read and write.
+                                                // we pass two uninialized parameters and we get two return values to these parameters as passing by out is write only.
+                                                // if we try to pass these uninialized parameters by ref it will give an error as it read and write.
+
+            /// we could also not declare the varible before calling and declare them when we call mehtod like:
+            int numberOUt = 20, numberOut2 = 4;
+            sumAndMultiply(numberOUt, numberOut2, out int sumresult, out int mulitplyresult);
+            Console.WriteLine(sumresult);//24
+            Console.WriteLine(mulitplyresult);// 80
+
+            /// Also we could pass only one out variable not both of them, In this case we need to use 
+            ///    underscore instead of un passed variable.
+            sumAndMultiply(firstNUmberOut, seccondNumberOut, out _, out mulitplyWithOut);
+            Console.WriteLine(mulitplyWithOut);// 80
+            /// in this case we didn't need to get the summtion, but we need the multiplcation so we didn't 
+            ///   pass a variable to sum, but we pass "mulitplyWithOut" variable to get multiply.
+
 
             //--------------------------------------------------------------------------------------------------------------//
-             
+            /// String In Details
+
+            /// You can instantiate a String object in the following ways
+            /// 
+            /// By assigning a string literal to a String variable.
+            /// This is the most commonly used method for creating a string.The following example
+            ///    uses assignment to create several strings.Note that in C# and F#, because the backslash (\)
+            ///    is an escape character, literal backslashes in a string must be escaped or the entire
+            ///    string must be @-quoted.
+            ///    
+            string string1 = "This is a string created by assignment.";
+            Console.WriteLine(string1);// This is a string created by assignment.
+            string string2a = "The path is C:\\PublicDocuments\\Report1.doc";
+            Console.WriteLine(string2a);// The path is C:\PublicDocuments\Report1.doc
+            // Here we use double backslash to diplay one backslash as backslash is a scape character.
+            string string2b = @"The path is C:\PublicDocuments\Report1.doc";
+            Console.WriteLine(string2b);// The path is C:\PublicDocuments\Report1.doc
+                                        // Here we use @ to diplay string as it is without any changes and use scape character as any other character.
+
+            ///By calling string constructor
+            ///
+            char[] chars = { 'w', 'o', 'r', 'd' };
+            byte[] bytes = { 0x41, 0x42, 0x43, 0x44, 0x45, 0x00 };
+
+            string stringFromChar = new string(chars);
+            Console.WriteLine(stringFromChar);
+            //string stringFromChar = chars;// this will return an error as we can't assign char array to string without constructor.
+            //string stringFromByte = new string(bytes);// this will return an error as its byte not char
+
+            /// using pointer we could sign byte array to string
+
+            /// Creating Strings from Pointers:
+            /// To create strings from pointers to the arrays, we need to use the unsafe keyword to indicate 
+            ///    that the code contains unsafe operations. This allows us to use pointers.
+            ///    
+            /// Pinning the Arrays with fixed: 
+            /// Inside the unsafe block, we use the fixed statement to pin the arrays chars and 
+            ///    bytes in memory.This ensures that their memory locations remain fixed and will 
+            ///    not be moved by the garbage collector during the execution of unsafe code.
+            ///    
+            /// Creating Strings from Pointers to Pinned Arrays:
+            /// After pinning the arrays, we can now create strings from pointers to the pinned memory. 
+            /// The new string(pointer) constructor is used for this purpose.
+            /// 
+            /// String Creation from Pointers Explanation:
+            /// For stringFromBytes: The pointer pbytes points to the pinned memory of the bytes array.
+            /// The new string(pbytes) constructor creates a string from the bytes starting at the memory 
+            ///   address pbytes until it encounters a null terminator(byte value 0x00).
+            /// In this case, the bytes at addresses 0x41, 0x42, 0x43, 0x44, and 0x45 correspond to the
+            ///    ASCII codes for the characters 'A', 'B', 'C', 'D', and 'E', respectively.
+            /// The resulting string will be "ABCDE".
+            string stringFromBytes = null;
+            unsafe
+            {
+                fixed (byte* pbytes = bytes)
+                {
+                    // Create a string from a pointer to a signed byte array.
+                    stringFromBytes = new string((sbyte*)pbytes);
+                }
+            }
+            Console.WriteLine(stringFromBytes);
 
 
+            /// We could create string of repeated character by 
+            String repeatedChar = new string('m', 20);
+            Console.WriteLine(repeatedChar);//mmmmmmmmmmmmmmmmmmmm
+                                            // this could be used with repeated single character.
+
+            /// By using the string concatenation operator:
+            /// to create a single string from any combination of String instances and string literals. 
+            /// The following example illustrates the use of the string concatenation operator.
+            /// 
+            string concateString1 = "today is " + DateTime.Now.ToString() + ".";
+            Console.WriteLine(concateString1);// today is 8/3/2023 3:53:06 PM.
+            // we use '+' concatenation operator to create string.
 
 
+            /// Methods
+            /// 
+
+            /// 1.Clone()
+            /// Returns a reference to this instance of String.
+            /// It's used To create a shallow copy of an object. This mean it just a reference to the exists object
+            /// 
+            /// In C#, when you use the Clone() method on a String object, it returns a reference to 
+            /// the existing string instance. This means that no new object is created in the heap memory. 
+            /// If you want to create a separate String object with the same value as the original instance, 
+            /// you can use the Copy or CopyTo method. 
+            /// 
+            /// Here in the next example we create an object and create a clone from it this mean new reference
+            ///    refer to the same object of the orignalString reference, but when we edeid cloneString
+            ///    we create a new object with new data.
+            String orignalString = "Original String.";
+            Console.WriteLine(orignalString);//Original String.
+            String cloneString = (string)orignalString.Clone(); 
+            Console.WriteLine(cloneString.GetHashCode());//126706928
+            Console.WriteLine(orignalString.GetHashCode());//126706928
+            Console.WriteLine(cloneString);//Original String.
+            cloneString = "original String edied.";
+            Console.WriteLine(orignalString);//Original String.
+            Console.WriteLine(cloneString);//original String edied.
+          
+            
+
+            //----------------------------------/
+            /// 2.Compare()
+            /// 
+            /// There are different ways to use compare() method 
+            /// 
+
+            /// 1. Ordinal Comparison:
+            /// "Compare(string1, string2)" used to compare between two strings.
+            /// if two strings are equal it returns "0".
+            /// if the first string is greater than the second one it returns possitive integer number >= 1 .
+            /// if the secon string is greater than the first one it returns negative ingeger number <= -1 .
+            /// 
+            /// 
+            String string2 = "apple";
+            string string3 = "banana";
+            Console.WriteLine(String.Compare(string3, string2)); // -1
+            Console.WriteLine(String.Compare(string2, string3)); // -1 
+            string string4 = "apple";
+            Console.WriteLine(String.Compare(string4, string2)); // 0 
+
+            /// 2.Compare(String, String, Boolean):
+            /// Compares two specified String objects, ignoring or honoring their case, and returns an 
+            ///   integer that indicates their relative position in the sort order.
+            ///   
+            string string5 = "APPLE";
+            Console.WriteLine(String.Compare(string2, string5, true));// 0
+            Console.WriteLine(String.Compare(string2, string5, false));// -1
+
+            /// 3.Ordinal Ignore Case Comparison:
+            /// 
+            /// This compares two strings while ignoring the case of the characters.
+            /// 
+
+            Console.WriteLine(String.Compare(string2, string5, StringComparison.OrdinalIgnoreCase));// 0
+            /// here both of string have the same value with differnt in case of letter, while we using
+            ///   "StringComparison.OrdinalIgnoreCase" to Ignore the case of letters.
+            ///   
+
+
+            /// 4.Compare(strA, indexA, strB, indexB, length):
+            /// The Compare method with the signature Compare(String strA, Int32 indexA, String strB, Int32 indexB, Int32 length)
+            ///     is a static member of the System.String class in C#. This overload of the Compare method allows
+            ///     you to compare substrings within two strings based on their indices and length.
+            /// 
+            /// Parameters
+            /// strA: The first input string.
+            /// indexA: The starting index within strA from which to compare the substring.
+            /// strB: The second input string.
+            /// indexB: The starting index within strB from which to compare the substring.
+            /// length: The number of characters to compare in both substrings.
+            /// 
+            /// Return Value:
+            /// An integer value that indicates the lexical relationship between the specified substrings:
+            /// A negative value: The substring in strA is less than the substring in strB.
+            /// Zero: The specified substrings are equal.
+            /// A positive value: The substring in strA is greater than the substring in strB.
+            /// 
+            string strA = "Mahmoud saadallah ibrahim";
+            string strB = "Mohamed Awadallah ibrahim";
+            Console.WriteLine(String.Compare(strA, 16, strB, 16, 7));// 0
+
+            strA = "hello world i'am here";
+            strB = "i'am here";
+            Console.WriteLine(String.Compare(strA, 12, strB, 0, 9));// 0
+            Console.WriteLine(String.Compare(strA, 7, strB, 3, 5));// 1
+
+
+            /// 5.Compare(String, Int32, String, Int32, Int32, Boolean):
+            /// Compares substrings of two specified String objects, ignoring or honoring their case, 
+            /// and returns an integer that indicates their relative position in the sort order.
+            /// 
+            /// Parameters
+            /// strA: The first input string.
+            /// indexA: The starting index within strA from which to compare the substring.
+            /// strB: The second input string.
+            /// indexB: The starting index within strB from which to compare the substring.
+            /// length: The number of characters to compare in both substrings.
+            /// boolean: is boolean value (true, false). true to ignore case of letters. false not to ignore.
+            strA = "Mahmoud saadallah ibrahim";
+            strB = "Mohamed Awadallah IBRAHIM";
+            Console.WriteLine(String.Compare(strA, 16, strB, 16, 7, true));// 0
+            Console.WriteLine(String.Compare(strA, 16, strB, 16, 7, false));// -1
+
+            //-------------------------------/
+            /// 3.CompareTo(String):
+            /// Compares this instance with a specified String object and indicates whether this instance
+            /// precedes, follows, or appears in the same position in the sort order as the specified string.
+            string2 = "apple";
+            string3 = "apple";
+            Console.WriteLine(string2.CompareTo(string3));// 0
+            string3 = "Apple";
+            Console.WriteLine(string2.CompareTo(string3));// -1
+            Console.WriteLine(string3.CompareTo(string2));// 1
+
+            //------------------------------/
+            /// 4.Concat(StrA, StrB)
+            /// 
+            /// Concatenates the string representations of two specified objects.
+            /// 
+            string2 = "apple";
+            string2 = String.Concat(string2, ", banana");
+            Console.WriteLine(string2);// apple, banana
+            string3 = "test";
+            string3 = String.Concat(string3, string2);
+            Console.WriteLine(string3);// testapple, banana
+
+            //-----------------------------/
+            /// 5.Concat(Object, Object, Object)
+            /// Concatenates the string representations of three specified objects.
+            /// we can concate more than three objects.
+            string4 = "new "; string2 = "apple "; string3 = "test ";
+            string4 = String.Concat(string4, string3, string2);
+            Console.WriteLine(string4);// new test apple 
+
+            //-----------------------------/
+            /// 6.Concat(Object[])
+            /// Concatenates the string representations of the elements in a specified Object array.
+            String string6;
+            char[] arr1 = { 'a', 'b', 'c', 'd' };
+            string6 = String.Concat(arr1);
+            Console.WriteLine(string6);// abcd
+
+            //-----------------------------/
+            /// 7.Contains(Char || substring)
+            /// 
+            /// Returns a value(true, false) indicating whether a specified character or string occurs within 
+            /// this string.
+            ///  
+            string2 = "Mahmoud saadallah";
+            Console.WriteLine(string2.Contains('s'));// True
+            Console.WriteLine(string2.Contains("saad"));// True
+            Console.WriteLine(string2.Contains("sad"));// false
+
+
+            //----------------------------/
+            /// 8.Contains(Char, StringComparison)
+            /// Returns a value indicating whether a specified character occurs within this string, 
+            /// using the specified comparison rules.
+            /// 
+            string2 = "Mahmoud Saadallah";
+            Console.WriteLine(string2.Contains('A', StringComparison.OrdinalIgnoreCase));// True
+            Console.WriteLine(string2.Contains('w', StringComparison.OrdinalIgnoreCase));// false
+
+            //----------------------------/
+            /// 9.Copy(String)
+            /// 
+            /// Obsolete.
+            /// Creates a new instance of String with the same value as a specified String.
+            /// This will create a new object has the same values that the origianl object has.
+            /// It's not like clone which create new reference to the same object.
+            /// 
+            string2 = "Mahmoud Saadallah.";
+            string6 = string.Copy(string2);
+            Console.WriteLine(string6);// Mahmoud Saadallah.
+            Console.WriteLine(string2.GetHashCode());// 2113809858
+            Console.WriteLine(string6.GetHashCode());// 2113809858
+            ///It's important to note that GetHashCode() provides a hash code based on the string's content. 
+            ///For strings with the same content, regardless of whether they are the same instance or separate
+            ///instances, their hash codes will be the same.
+            ///so don't be confused when you find that they have the same hashcode and think they are two 
+            ///  reference to the same object. because they have two objects.
+            ///  
+
+            //----------------------------/
+            /// 10.CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count)	
+            /// 
+            /// Copies a specified number of characters from a specified position in this instance to 
+            ///    a specified position in an array of Unicode characters.
+            ///    
+            /// Parameters:
+            /// sourceIndex: The starting index in the source string from which to begin copying characters.
+            /// destination: The character array to which the characters will be copied.
+            /// destinationIndex: The starting index in the destination array where the copying will start.
+            /// count: The number of characters to copy from the source string to the destination array.
+            /// 
+            string strSource = "changed";
+            char[] destination = { 'T', 'h', 'e', ' ', 'i', 'n', 'i', 't', 'i', 'a', 'l', ' ',
+                                   'a', 'r', 'r', 'a', 'y' };
+            Console.WriteLine(destination);// The initial array
+
+            strSource.CopyTo(0, destination, 4, 7);
+            Console.WriteLine(destination);// The changed array
+
+            strSource = "A different string";
+
+            // Embed only a section of the source string in the destination
+            strSource.CopyTo(2, destination, 3, 9);
+
+            // Print the resulting array
+            Console.WriteLine(destination);// Thedifferentarray
+
+            //----------------------------------/
+            /// 11.EndsWith( subString)
+            ///
+            /// Determines whether the end of this string instance matches the specified string.
+            /// 
+            string2 = "Mahmoud saadallah";
+            Console.WriteLine(string2.EndsWith("ah")); // true
+            Console.WriteLine(string2.EndsWith("s")); // false
+            Console.WriteLine(string2.EndsWith("ALLAH", StringComparison.OrdinalIgnoreCase)); // true
+
+
+            //---------------------------------/
+            /// 12.Equals(String)
+            /// 
+            /// Determines whether this instance and another specified String object have the same value.
+            /// 
+            string2 = "apple";
+            string3 = "apple";
+            Console.WriteLine(string2.Equals(string3));// true
+            Console.WriteLine(String.Equals(string2, string3));// true
+
+            string3 = "APPLE";
+            Console.WriteLine(string2.Equals(string3));// false
+            Console.WriteLine(string.Equals(string2, string3));// false
+
+            Console.WriteLine(string.Equals(string2, string3, StringComparison.OrdinalIgnoreCase));// true
+            Console.WriteLine(string2.Equals(string3, StringComparison.OrdinalIgnoreCase));// true
+
+            //-----------------------------------/
+            /// 13.Format(IFormatProvider, String, Object)
+            /// 
+            /// The string.Format method in C# is a powerful and flexible way to create formatted strings
+            ///   by combining a format string and one or more objects. 
+            /// It is typically used to create text-based representations of data.
+            /// 
+            String myName = "Mahmoud";
+            int myAge = 22;
+            double height = 1.78;
+            String formatedString = String.Format("My name is: {0}\n I'm {1} years old\n" +
+                "my hight is: {2}", myName, myAge, height);
+            Console.WriteLine(formatedString);//My name is: Mahmoud
+                                              //I'm 22 years old
+                                              //my hight is: 1.78
+
+            //-----------------------------------------/
+
+            //--------------------------------------------------------------------------------------------//
+            /// Struct
+            /// 
+            /// To call struct we use the new keyword like calling class, but even if we didn't use new keyword
+            ///  the engin will allocate it in memory as it is a vlaue type not refernce type like class.
+            Common c = new Common(0,0,0);
+            Console.WriteLine(c.publicFild);
+            Console.WriteLine(c);// it will call atomaticlly ToString method as we override it in struct.
+
+            //------------------------------------------------------------------------------------------------------//
+            /// Enums
+            DaysOfTheWeek day = DaysOfTheWeek.Monday;
+            Console.WriteLine(day);// Monday.
+            switch (day)
+            {
+                case DaysOfTheWeek.Monday:
+                    {
+                        Console.WriteLine(2);
+                        break;
+                    }
+                case DaysOfTheWeek.Saturday:
+                    {
+                        Console.WriteLine(7);
+                        break;
+                    }
+                case DaysOfTheWeek.Tuesday:
+                    {
+                        Console.WriteLine(3);
+                        break;
+                    }
+                case DaysOfTheWeek.Wednesday:
+                    {
+                        Console.WriteLine(4);
+                        break;
+                    }
+                case DaysOfTheWeek.Thursday:
+                    {
+                        Console.WriteLine(5);
+                        break;
+                    }
+                case DaysOfTheWeek.Friday:
+                    {
+                        Console.WriteLine(6);
+                        break;
+                    }
+                case DaysOfTheWeek.Sunday:
+                    {
+                        Console.WriteLine(1);
+                        break;
+                    }
+            }
+
+            // enum is an intger values with lables.
+            // like in our example here sunday is 0 with lable Sunday, monday is 1 with lable Monday and so on.
+            // so we could say DaysOfTheWeek day4 = (DaysOfTheWeek) 4; and it will return Thursday.
+            DaysOfTheWeek day4 = (DaysOfTheWeek) 4;
+            Console.WriteLine(day4); // Thursday.
+            // if we give it a value not in the enum like 10 and we know Days of the week is 7 then it will return the same passed value.
+            day4 = (DaysOfTheWeek)10;
+            Console.WriteLine(day4);    
 
         }// End of main
 
@@ -759,7 +1215,7 @@ namespace CSharpCommands
         //     but if we pass any data then the passed data will be used.
         // Also we could pass data in different order, but in this time we have to write the name of parameter then : then value.
         //Also we could pass just one of parameters not all parameters.
-        public static void printLine(int n = 5, String output = " * ")
+        public static void printLine(int n = 5, System.String output = " * ")
         {
             for (int i = 0; i < n; i++)
             {
@@ -808,14 +1264,161 @@ namespace CSharpCommands
             array = new int[10];
         }//End of ModifyPersonNameByReference
 
-        static void sumAndMultiply (int n1,  int n2, out int sum, out int mulitply)
+        static void sumAndMultiply(int n1, int n2, out int sum, out int mulitply)
         {
             //Note: When using out, you must assign a value to all out parameters within the method before it returns.
             sum = n1 + n2;
             mulitply = n1 * n2;
         }
+
+    }// end of class.
+
+    ///Struct
+    /// In C#, a struct (short for "structure") is a value type that represents a composite data type.
+    /// Unlike classes, which are reference types, structs are value types, meaning they are stored directly
+    ///   in memory where they are declared rather than being stored in the heap and referenced indirectly.
+    /// Structs are generally used for lightweight data structures that have a small memory footprint and
+    ///    are frequently copied.
+    ///    
+    /// Here are some key characteristics of structs in C#:
+    /// 1. **Value Type**: Structs are value types, which means they are copied when assigned to another
+    ///   variable or passed as a method parameter.This is in contrast to classes, which are reference types and are passed by reference.
+    ///   
+    /// 2. **Memory Allocation**: Structs are allocated on the stack or as part of another object's memory
+    ///  allocation, making them more efficient in terms of memory usage and performance compared to classes.
+    ///  
+    /// 3. **Constructor**: Structs can have constructors, but unlike classes, they cannot have a default
+    ///   (parameterless) constructor.All fields of a struct must be initialized in a constructor.
+    ///   
+    /// 4. **Inheritance**: Structs cannot inherit from other structs or classes, and they cannot serve as 
+    ///   a base for other classes or structs.
+    ///   
+    /// 5. **Members**: Structs can have fields, properties, methods, and events, similar to
+    ///   classes.However, they cannot have finalizers (destructors) or be used as base types.
+    ///   
+    /// 6. **Default Values**: If a struct is not explicitly initialized, its fields will be assigned 
+    ///   default values(zero or null values) based on their data types.
+    ///   
+    /// 7. **Copying and Equality**: When you assign a struct to another variable or pass it as a method 
+    ///   parameter, a copy of the struct is made.Each copy has its own separate data.Equality for structs 
+    ///   is based on the values of their fields.
+    ///     
+    /// 8. **Immutable**: It's a good practice to design structs to be immutable (i.e., their fields   cannot be changed after creation). This helps maintain consistency and predictability.
+    // Default access modifer inside namespace for(class, struct) is: internal
+    struct Common
+    {
+        /// Access Modifer:
+        /// Default access level in struct or class is: private by default not like java which has a default
+        ///    access level which is default to the package scope.
+        ///    
+        /// In C#, access modifiers are keywords that specify the visibility and accessibility of types
+        /// (classes, structs, enums, etc.), members (fields, properties, methods, etc.), and nested types  
+        /// Access Modifer:
+        /// within a namespace or class. Access modifiers control which parts of your code can access certain 
+        /// Access Modifer:
+        /// types and members, helping you manage the visibility of your code's elements.
+        /// 
+        ///Here are the main access modifiers in C#:
+        ///
+        /// 1. **`public`**: Members with this modifier are accessible from any code that can see the 
+        ///   containing class or struct. They have the widest accessibility.(Accessable everywhere).
+        ///
+        /// 2.**`protected`**: Members with this modifier are accessible within the containing class, as well 
+        ///  as in derived classes.They are not accessible from outside the class hierarchy.
+        ///  (Between base and child class) inhertance only.
+        ///
+        /// 3. **`internal`**: Members with this modifier are accessible within the same assembly(project). 
+        ///   It allows sharing code among classes within the same assembly but not to code outside that assembly.
+        ///   An assembly is a compiled unit of code that could be a single .NET executable file, a DLL 
+        ///   (Dynamic Link Library), or other types of assemblies.
+        ///  This mean it's accessable at anyplace inside the programe even if it in defferent nameSpace.
+        ///
+        /// 4. **`protected internal`**: This is a combination of `protected` and `internal`. Members with
+        ///   this modifier are accessible within the same assembly and also in derived classes, whether 
+        ///   those derived classes are in the same or different assemblies.
+        /// 5. **`private`**: Members with this modifier are only accessible within the containing class or 
+        ///     struct. They are not accessible from outside the class.
+        ///     
+        /// 6. ** 'private protected'**: The private protected access modifier restricts access to the 
+        ///      containing class and derived classes within the same assembly. This modifier was introduced  
+        ///      to allow a combination of private and protected behavior.
+
+        public int publicFild = 0;
+        // Accessable from everywhere inside or outside the assembly file.
+
+        internal int internalFild;
+        // Accessable from everywhere inside the assembly file.
+
+        private int privateFild;
+        // Accessable inside the class only.
+
+        // protected filds can't be declared inside sturct as it can't be inherted.
+
+        public Common(int pulicFild, int internalFild, int privateFild)
+        {
+            // we could have a constructor inside struct.
+            // Any userdefined Contstructor in struct must fully initialize all struct Attribute.
+            this.internalFild = internalFild;
+            this.privateFild = privateFild;
+            this.publicFild = pulicFild;
+
+        }
+        public void print() 
+        {
+            Console.WriteLine($"PublicFild: {publicFild} \n" +
+                $"internalFild: {internalFild} \n" +
+                $"privterFild: {privateFild}" );
+        }
+        public override string ToString()
+        {
+            return $"publicFild: {publicFild}, privateFild: {privateFild}, internalFild: {internalFild}";
+        }
+
     }
 
+    /// <Enumeration:>
+    /// In C#, an enum (short for "enumeration") is a value type that defines a named set of related named constants. 
+    /// Enums provide a convenient way to work with a group of related constants that represent distinct values.
+    /// Enums make code more readable, maintainable, and self-documenting by giving meaningful names to specific values. 
+    /// 
+    /// In this example, an enum named DaysOfWeek is defined, containing the names of the days of the week as constants.
+    /// Each constant represents a unique integer value starting from 0 (Sunday) to 6 (Saturday).
+    /// Enums are indexed starting from 0 by default, but you can assign specific integer values to enum constants if needed.
+    /// 
+    /// Enums are particularly useful when you want to represent a limited set of options or states in your code. 
+    /// They improve code readability by using descriptive names instead of hard-coded integer values.
+    /// 
+    /// Key points about enums in C#:
+    /// 1. Underlying Type: Enums have an underlying integral type(usually int), and each enum member corresponds 
+    ///    to a unique integer value of that type.
+    ///    
+    /// 2. Value Assignment: By default, the first enum member has a value of 0, and subsequent members are 
+    ///    assigned values incrementing by 1. However, you can explicitly assign values to enum members.
+    /// 
+    /// 3. Comparisons: Enums are compared using value equality.You can use enums in comparisons, switch statements,
+    ///     and as method parameters.
+    ///     
+    /// 4. ToString(): Calling ToString() on an enum member returns its name as a string.
+    /// 
+    /// 5.  Casting: You can cast an enum value to its underlying type and vice versa.
+    /// 
+    /// 6.  Namespace: Enums are typically defined within a namespace.
+    /// 
+    /// Enums are a great way to make your code more expressive and self-explanatory, especially when dealing with sets of related constants.
+    /// 
+    /// </Enumeration:>
+    enum DaysOfTheWeek
+    {
+        // enum is an intger values with lables.
+        // like in our example here sunday is 0 with lable Sunday, monday is 1 with lable Monday and so on.
+        Sunday,
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday
+    }
 
 
     class Test
