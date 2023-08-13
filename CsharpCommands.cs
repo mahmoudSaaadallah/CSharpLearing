@@ -5,6 +5,7 @@ using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -1158,6 +1159,7 @@ namespace CSharpCommands
             /// Enums
             DaysOfTheWeek day = DaysOfTheWeek.Monday;
             Console.WriteLine(day);// Monday.
+            Console.WriteLine((int)day);// 1.
             switch (day)
             {
                 case DaysOfTheWeek.Monday:
@@ -1202,9 +1204,78 @@ namespace CSharpCommands
             // so we could say DaysOfTheWeek day4 = (DaysOfTheWeek) 4; and it will return Thursday.
             DaysOfTheWeek day4 = (DaysOfTheWeek) 4;
             Console.WriteLine(day4); // Thursday.
+
             // if we give it a value not in the enum like 10 and we know Days of the week is 7 then it will return the same passed value.
-            day4 = (DaysOfTheWeek)10;
-            Console.WriteLine(day4);    
+            day4 = (DaysOfTheWeek)10; // we have to use explicit casting.
+            Console.WriteLine(day4);
+
+            // We have to know that when we try to store the enum values in database it will be stored not with label 
+            //    but it will be stored with its integer values, as if we store sunday in database it will be stored with value 0.
+
+            // What about if we want to change the value of the label. 
+            // For example if we have an enum which has the name of departments in our company and want to store each 
+            //   department Id not with integer number start with 0. we want to give each lable an Id to store it in 
+            //   database with its id.
+            // The next enum will give spacific values to lables.
+            Departments dep1 = Departments.security;
+            System.Console.WriteLine(((int)dep1)); // 401
+            dep1 = Departments.network;
+            System.Console.WriteLine(((int)dep1)); // 403 as the security department take 401 then the department
+                                                   // projectManagement take 402 and network take 403
+                                                   // and so on we don't have to give each department value if the increasing is by one.
+
+
+            /*
+                /// <Enum_flags>
+                /// Lets imagin the following situation:
+                /// If we have four flags (Read, Write, Excute, Delete) to give primission to user to modify data and we want 
+                ///    to store them in binary(1000, 0100, 0010, 0001) by this way, so we don't have to use array of flags which 
+                ///    will use 4 byte in memory and this is extra useage. we could use an enum with data type of byte which could 
+               ///    store 8 flags not just four so we could save the memory.
+               /// We could give each flage his value in different ways in binnary or hexdecmial or decmial.
+               /// </Enum_flags>
+               /// 
+               // we have to know that we couldn't use two premissions at the same time until we use this command
+                [Flags]
+                // this command is used to allow us to use the enum as a flag not just bit. this command make the CLR know that we could make
+                //    a commbsion of two or more flags using OR, AND or XOR.
+
+               enum premission : byte
+               {
+                   Read = 0x08, Write = 0b0000_0100, Excute = 2, Delete = 0x1, Admin = 0x0f 
+               }
+
+             */
+            Premission p1 = Premission.Read;
+            p1 ^= Premission.Write; // Read xor  Write.
+            Console.WriteLine((p1));// Read, Write
+            p1 ^= Premission.Read;
+            Console.WriteLine((p1));// Write.
+            p1 = (Premission)12;
+            Console.WriteLine(p1);// Read, Write
+            // As now p1 has Read and write flage if we want to check if the read flage is used by using equal operator
+            //   '==' it will return false as the equal Operator doesn't check bit by bit it check the all value, so
+            //   it will see the value of p1 = 12.
+            if (p1 == Premission.Read)
+                Console.WriteLine(true);
+            else
+                Console.WriteLine(false);
+            // it will retrun false 
+            // so to check if the read flage is used then we have to make an expression with and operator.
+            if ((p1 & Premission.Read) == Premission.Read)
+                Console.WriteLine(true);
+            else 
+                Console.WriteLine(false); 
+            // false.
+
+
+
+
+
+
+
+            //------------------------------------------------------------------------------------------------------//
+
 
         }// End of main
 
@@ -1419,14 +1490,174 @@ namespace CSharpCommands
         Friday,
         Saturday
     }
+    // We could change the dateType of enum from int to any other numeric datatype by the next way 
+    // it is look like inhertance, but it's not an inhertance.
+    enum Departments : short
+    {
+        softWare = 101,
+        hardWare = 201,
+        programming = 301,
+        security = 401, 
+        projectManagement,// it will take 402 by default as the previous one has 401 value.
+        network // 403
+    }
 
+    /// <Enum_flags>
+    /// Lets imagin the following situation:
+    /// If we have four flags (Read, Write, Excute, Delete) to give primission to user to modify data and we want 
+    ///    to store them in binary(1000, 0100, 0010, 0001) by this way, so we don't have to use array of flags which 
+    ///    will use 4 byte in memory and this is extra useage. we could use an enum with data type of byte which could 
+    ///    store 8 flags not just four so we could save the memory.
+    /// We could give each flage his value in different ways in binnary or hexdecmial or decmial.
+    /// </Enum_flags>
+
+    // we have to know that we couldn't use two premissions at the same time until we use this command
+    [Flags]
+    // this command is used to allow us to use the enum as a flag not just bit. this command make the CLR know that we could make
+    //    a commbsion of two or more flags using OR, AND or XOR.
+    enum Premission : byte
+    {
+        Read = 0x08, Write = 0b0000_0100, Excute = 2, Delete = 0x1, Admin = 0x0f 
+    }
 
     class Test
     {
         public String testString;
+        
     }
     class Test2
     {
         public Test test;
+    }
+    struct Employee
+    {
+        int id;// private fild by default 
+
+        ///<Property> 
+        /// In C#, a property (short for "property procedure") is a member of a class, struct, or interface that 
+        ///  provides a flexible way to read or write values of private fields while encapsulating the underlying
+        ///  implementation details. Properties allow you to expose data in a controlled and consistent manner, 
+        ///  and they are often used to ensure proper access and validation of fields.
+        /// </Property>
+
+        ///<Advantages-of-Properties:>
+        /// Encapsulation: Properties provide a way to hide the details of how data is stored and retrieved.
+        /// Validation: Properties enable you to validate and enforce constraints when getting or setting values.
+        /// Code Maintainability: If you need to change how data is stored or computed, you only need to update the 
+        /// property implementation.
+        ///</Advantages>
+
+        /*
+               access-modifier data-type PropertyName
+               {
+                    get
+                    {
+                        // return value or expression
+                    }
+                    set
+                    {
+                        // set value or perform validation
+                    }
+               }
+
+          * access-modifier: Specifies the accessibility of the property (public, private, protected, internal, etc.).
+          * data-type: Properties have a data type that defines the type of value they store or expose. 
+          * PropertyName: The name of the property, usually following PascalCase naming conventions.
+         */
+
+
+        //Auto-Implemented Properties:
+        // C# supports auto-implemented properties, which automatically create a private backing field.
+        public String Name { get; set; }
+
+        /*
+         * Get Accessor (Getter):
+            The get accessor retrieves the value of the property.
+            It returns the value to the caller.
+            It is required for every property and cannot be omitted.
+
+       *   Set Accessor (Setter):
+            The set accessor sets the value of the property.
+            It allows modification of the underlying data.
+            It is optional. If omitted, the property is read-only.
+         */
+        decimal salary;
+        public Decimal Salary 
+        {
+            // To make a prop that has an implemented get and set we have to use a private fild like using private salary 
+            //   in the get here we don't use the Salary with capital S, but we use salary which is the name of fild
+            //   why?? as if we use Salary which is the name of prop this will make an infinty stack overflow as
+            //    the prop is look like the mehtod so it will call him self forever so we use a private fild with 
+            //    slef-Implemented properties.
+            get
+            {
+                return salary;
+            }
+            set 
+            { 
+                salary = value >= 1300? value : 1300;
+            }
+
+        }
+
+        /// <Read-Only Properties:>
+        ///  You can have properties with only a get accessor, making them read-only.
+        ///  These properties can be set only within the constructor or through internal logic
+        /// </Read-Only Properties:>
+        int department;
+        public int Department 
+        {
+            get
+            {
+                return department;
+            }
+        }
+
+        /// <Write-Only Properties:>
+        /// You can have properties with only a set accessor, making them write-only.
+        /// These properties can be used to set values without directly retrieving them.
+        /// </Write-Only Properties:>
+        private int managerId;
+
+        public int ManagerId
+        {
+            set
+            {
+                //The value keyword is used in the set accessor to represent the value being assigned to the property.
+                managerId = value;
+            }
+        }
+        /// <Property Initialization:>
+        /// You can initialize properties directly in the property declaration using the { get; set; }
+        /// syntax.
+        /// This is applicable to auto - implemented properties.
+        /// Initialization can simplify the constructor by providing default values.
+        /// </Property Initialization:>
+        public int Age { get; set; } = 0;
+
+        // We could change the access of get only or set only in property.
+        // We could make prop public and get internal or make set private, but the accessor of set or get must ber
+        //  mor restrictive than the property which mean if the prop is private we can't make the set or get public
+        //    or internal, but if the prop is public we could make set or get public internal or private.
+        Date birthDate;
+        public Date BirthDate
+        {
+            get
+            {
+                return birthDate;
+            }
+            internal set 
+            {
+                birthDate = value;
+            }
+        }
+        public Employee()
+        {
+        }
+
+
+
+
+
     }
 }
