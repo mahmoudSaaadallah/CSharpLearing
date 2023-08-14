@@ -2,6 +2,7 @@
 using Microsoft.VisualBasic;
 using System;
 using System.Buffers.Text;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -19,9 +20,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Security.AccessControl;
+using System.Xml.Linq;
 
 /* In C sharp we could use a static using to import any class as a static so we could use all the methods
     in this class without writing all the pass of the mehtod like when we use a System.Console class
@@ -1265,17 +1268,31 @@ namespace CSharpCommands
             if ((p1 & Premission.Read) == Premission.Read)
                 Console.WriteLine(true);
             else 
-                Console.WriteLine(false); 
+                Console.WriteLine(false);
             // false.
 
-
-
-
-
-
-
             //------------------------------------------------------------------------------------------------------//
+            /// Indexer
+            phoneBook book = new phoneBook(6);
+            book.setEntry(0, "abc", 123);
+            book.setEntry(1, "def", 456);
+            book.setEntry(2, "xyz", 789);
+            book.setEntry(3, "nop", 159);
+            Console.WriteLine(book.getNumber("xyz"));// 789
+            /// This way of dealing with the class phonBook take lot of time as we have to call the function set entry
+            ///    to set a number and call the function getNumber to ge a number and this is so boring 
+            /// There is another way by using indexer to get number like using array like say book["abc"] which will 
+            ///     return 123 without calling any methods.
+            /// To do so we need an indexer in the phoneBook class.
 
+            book["def"] = 357;
+            Console.WriteLine(book["nop"]);
+            Console.WriteLine(book["def"]);
+
+            book[4, "jkl"] = 351;
+            Console.WriteLine(book["def"]); // 351
+
+            Console.WriteLine(book[3]); // name: nop ::: number: 159
 
         }// End of main
 
@@ -1529,6 +1546,7 @@ namespace CSharpCommands
     {
         public Test test;
     }
+
     struct Employee
     {
         int id;// private fild by default 
@@ -1546,6 +1564,9 @@ namespace CSharpCommands
         /// Code Maintainability: If you need to change how data is stored or computed, you only need to update the 
         /// property implementation.
         ///</Advantages>
+        
+        // we have to know that we can't overload property as it the set of property take only one parameter
+        // in other way we could say there is no prop take more than one parameter.
 
         /*
                access-modifier data-type PropertyName
@@ -1651,13 +1672,105 @@ namespace CSharpCommands
                 birthDate = value;
             }
         }
+
+        // we have to know that we can't overload property as it the set of property take only one parameter
+        // in other way we could say there is no prop take more than one parameter.
+
+
+    
         public Employee()
         {
         }
+    }
 
+    struct phoneBook
+    {
+        // we have to know that we can't overload property as it the set of property take only one parameter
+        // in other way we could say there is no prop take more than one parameter.
 
+        /// <Indexer>
+        /// Indexer is a spechial property which accept more than one paramerter and could be overloaded.
+        /// An indexer in C# is a special type of property that allows instances of a class or struct to be accessed
+        ///    using an index, similar to how arrays are accessed. Indexers provide a way to define and access 
+        ///    elements of a collection-like object using indexing syntax. They are particularly useful when you want
+        ///    to treat an object as if it were an array or collection.
+        ///    
+        /// 
+        /// </Indexer>
+        /// 
 
+        string[] names;
+        long[] numbers;
+        int size;
 
+        public int Size { get { return size; } }
+        public phoneBook(int size)
+        {
+            this.size = size;
+            names = new string[size];
+            numbers = new long[size];
+        }
+        public void setEntry(int index, string name, long number)
+        {
+            if (index >= 0 && index < size)
+            {
+                names[index] = name;
+                numbers[index] = number;
+            }
+        }
 
+        public long getNumber(string name)
+        {
+            for (int i = 0; i < names?.Length; i++)
+                if (names[i] == name)
+                    return numbers[i];
+            return -1;
+        }
+
+        ///<Indexer>
+        /// Key points about indexers in C#:
+        /// Declaration: Indexers are declared with the this keyword followed by the index type in square brackets.
+        /// Access Modifiers: Indexers can have access modifiers (public, private, protected, internal).
+        /// Get Accessor: The get accessor is executed when the object is accessed using an index.
+        /// Set Accessor: The set accessor is executed when a value is assigned to an index.
+        /// Usage: Indexers are used with an instance of the containing class, just like arrays.
+        /// Multiple Parameters: You can define indexers with multiple parameters if needed, allowing for more complex
+        ///   indexing logic.
+        ///   
+        /// 
+        /// Advantages of using indexers:
+        /// Consistent Syntax: Indexers provide a consistent and familiar way to access elements, similar to arrays.
+        /// Abstraction: Indexers allow you to abstract away the implementation details of how elements are stored and retrieved.
+        /// Custom Logic: You can add custom logic inside the indexer's get and set accessors to perform validation, 
+        ///    transformation, or other tasks.
+        /// Indexers are commonly used in collection classes, allowing you to access elements using natural and 
+        ///    intuitive indexing syntax.They help encapsulate data access and promote clean
+        ///</Indexer>
+
+        public long this[string name]
+        {
+            /// here I implement this indexer to retrun numbers of specific name 
+            get { return numbers[Array.IndexOf(names, name)]; }
+            /// here I implement this indexer to set numbers to specific name 
+            set
+            {
+                if (Array.IndexOf(names, name) > 0)
+                    numbers[Array.IndexOf(names, name)] = value;
+            }
+        }
+        // Now I could overload this indexer
+        public long this[long  index, string name] 
+        {
+            set
+            {
+                names[index] = index >= 0 && index < size ? name : null;
+                numbers[index] = index >= 0 && index < size ? value : 0;
+            }
+        }
+
+        public String this[int index]
+        {
+            get { return index >= 0 && index < size ? $"name: {names[index]} ::: number: {numbers[index]}" : "nothing"; }
+        }
     }
 }
