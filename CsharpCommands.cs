@@ -7,23 +7,30 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Diagnostics.Metrics;
+using System.Drawing;
 using System.Dynamic;
+using System.IO;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Security.AccessControl;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 /* In C sharp we could use a static using to import any class as a static so we could use all the methods
@@ -33,6 +40,7 @@ using System.Xml.Linq;
 */
 using static System.Console;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Reflection.Metadata.BlobBuilder;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Object = System.Object;
 using String = System.String;
@@ -1280,19 +1288,446 @@ namespace CSharpCommands
             book.setEntry(3, "nop", 159);
             Console.WriteLine(book.getNumber("xyz"));// 789
             /// This way of dealing with the class phonBook take lot of time as we have to call the function set entry
-            ///    to set a number and call the function getNumber to ge a number and this is so boring 
+            ///    to set a number and call the function getNumber to get a number and this is so boring. 
             /// There is another way by using indexer to get number like using array like say book["abc"] which will 
             ///     return 123 without calling any methods.
             /// To do so we need an indexer in the phoneBook class.
 
             book["def"] = 357;
-            Console.WriteLine(book["nop"]);
-            Console.WriteLine(book["def"]);
+            Console.WriteLine(book["nop"]);// 159
+            Console.WriteLine(book["def"]);// 357
 
             book[4, "jkl"] = 351;
-            Console.WriteLine(book["def"]); // 351
+            Console.WriteLine(book["jkl"]); // 351
 
             Console.WriteLine(book[3]); // name: nop ::: number: 159
+
+
+            //------------------------------------------------------------------------------------------------------//
+            ///<InterFace>
+            ///</InterFace>
+            SeriesByTwo seriesByTwo = new SeriesByTwo();
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write($"{seriesByTwo.Currrent}  ");
+                seriesByTwo.GetNext();
+            } // 0  2  4  6  8  10  12  14  16  18
+
+            // We could create reference of interface, but it has to refer to any class implement this interface.
+            ISeries series = new FibSeries();
+            // This way of creation an object is create an object from FibSeries class, but could use the method of 
+            //     ISeries interface only which mean if there are any method owned by FibSeries class this object couldn't use it.
+            for (int i = 0; i < 10; i++)
+            {
+                Console.Write($"{series.Currrent}   ");
+                series.GetNext();
+            }
+
+
+        //--------------------------------------------------------------------------------------------------//
+        ///<foreach>
+        /// The foreach statement in C# is used to iterate over elements in a collection (such as arrays, lists, or
+        ///    any type that implements the IEnumerable interface) without the need for explicit indexing or manual
+        ///    iteration. It simplifies the process of looping through each element of a collection, making the 
+        ///    code more concise and readable.
+        ///  
+        /// foreach (var element in collection)
+        /// {
+        ///         // Code to be executed for each element
+        /// }
+        /// element: Represents the current element being iterated over.
+        /// collection: The collection(or object implementing IEnumerable) to be iterated.
+        /// </foreach>
+
+            int[] arr = { 10, 5, 8, 7, 9, 2, 1, 3 };
+            Array.Sort(arr); // this is used to sort array.
+            foreach (int i in arr)
+            {
+                // i : read only.
+                Console.WriteLine(i);// 1  2  3  5  7  8  9  10
+            }
+            ///<Points>
+            ///
+            /// Read-Only: The variable used in the foreach loop is read-only and cannot be modified within the loop.
+            /// No Indexing: foreach abstracts away indexing and simplifies iteration.
+            /// No Need for Length: You don't need to know the length or size of the collection to iterate using foreach.
+            /// Collection Conformance: The collection being iterated must conform to the IEnumerable or IEnumerable
+            ///    < T> interface.
+            /// Easier to Understand: foreach enhances code readability by focusing on the iteration logic rather 
+            ///   han indexing details.
+            ///   
+            /// </Points>
+            /// 
+
+            // Here we use Array.sort to sort array, because this arry is integer array, but if this array is array 
+            //    of object then we couldn't use Array.sort directly to sort it as we have to make these objects
+            //    in this arrray implement IComparable interface 
+            //----------------------------------------------------------------------------------------------------///
+            ///<SortingArray>
+            /// value type arrays could be sorted using Array.sort, but refernce type array couldn't until we
+            ///    implement IComparable interface.
+            /// </SortingArray>
+            char[] charArray = { 'a', 'd', 'y', 'x', 't', 'e' };
+            Array.Sort(charArray);// it will be sortted as it is value type array.
+
+            Employee[] employee =
+            {
+                new Employee(1, "Ahmed Mohamed", 7050),
+                new Employee(2, "Mahmoud Saadallah", 9400),
+                new Employee(3, "Omar Emad", 10000),
+                new Employee(4, "Osman Aslam", 11400)
+            };
+            Array.Sort(employee); // this will return an error of type
+            // System.InvalidOperationException: 'Failed to compare two elements in the array.
+            // To use this command to sort array of object we need to implement IComparable intereface in the class Employee.
+            // now after implement this interface we could implement the single method on it which is CompareTo
+            //   and by implementation we could decide way of sortting.
+            foreach (Employee i in employee)
+                Console.WriteLine(i);
+
+            //----------------------------------------------------------------------------------------///
+            ///<Execption_Handling>
+            /// Exception handling in C# is a mechanism that allows you to gracefully handle and manage runtime
+            /// errors, known as exceptions, that may occur during program execution. Exceptions can be caused by
+            /// various factors, such as invalid input, unexpected conditions, or external issues like file I/O
+            /// errors or network problems. By handling exceptions, you can prevent your program from crashing and
+            /// provide appropriate error messages or alternative behaviors.
+            /// 
+            /// Here's how exception handling works in C#:
+            /// 
+            /// Throwing Exceptions:When an error occurs, you can throw an exception using the throw statement.
+            /// Exceptions are instances of classes derived from the System.Exception class or its subclasses.
+            /// 
+            /// Catching Exceptions:
+            /// To catch exceptions, you use try and catch blocks.
+            /// The try block contains the code that might throw an exception.
+            /// The catch block specifies the type of exception to catch and provides code to handle the exception.
+            /// 
+            /// Finally Block:
+            /// You can include a finally block after a try and catch block.
+            /// The finally block contains code that executes regardless of whether an exception was thrown
+            /// or caught.
+            ///  It's often used to clean up resources that were acquired in the try block.
+            ///  
+            /// Multiple Catch Blocks:
+            /// You can have multiple catch blocks to handle different types of exceptions.
+            /// The first catch block that matches the thrown exception's type will be executed.
+            /// </Execption_Handling>
+            
+
+            int x, y, z;
+
+            
+            // here we don't know what type of input will the uset enter may be the user will enter char 
+            //   which will trow an execption or enter a string.
+            // To handle these satates we could use try block.
+            // When using try block we have to use catch block or finally block or use both of them.
+            try
+            {
+                x = int.Parse(Console.ReadLine());
+                y = Convert.ToInt32(Console.ReadLine());
+
+                // here also the user might enter zero to y and the next command will return an error as we
+                //  devied by zero.
+                z = x / y;
+                // To use your own execption that you create in another class we have to use "throw new" keyword.
+                if (y < 0)
+                    throw new NegativeNumberExecption();
+                // then we could catch this execption in catch block.
+
+                // If all the code inside try block excute without execption then the catch block will 
+                //    never execute.
+            }
+            ///<CatchBlock>
+            /// The catch block is used to handle exceptions that are thrown within a try block.it 
+            ///   provides a mechanism to respond to specific types of exceptions and execute custom code 
+            ///   when those exceptions occur.
+            ///   The catch block follows the try block and comes before any finally block if present.
+            /// Catch block is used to catch execption. inside the catch block we define the type of 
+            ///   exectption that might be happen.
+            /// There are lot of execptions implemented in System.Execption class 
+            /// If we use catch block without define type of excpected execption this mean we use parent
+            ///   Execption class.
+            ///</CatchBlock>
+
+            /*
+            *  try
+               {
+                  // Code that may throw an exception
+                  }
+                  catch (ExceptionType1 ex)
+                  {
+                     // Code to handle ExceptionType1
+                  }
+                  catch (ExceptionType2 ex)
+                  {
+                      // Code to handle ExceptionType2
+                  }
+                  // Additional catch blocks as needed
+
+            */
+
+            ///<PointsOfCatch>
+            /// Key points about the catch block:
+            /// 
+            /// Exception Type: Each catch block specifies the type of exception it will catch. 
+            ///  For example, catch (DivideByZeroException ex) will catch DivideByZeroException or its
+            ///   derived exceptions.
+            /// 
+            /// Handling Logic: Inside the catch block, you write code to handle the specific exception 
+            ///   that is caught.This might involve providing an error message, logging the error, or 
+            ///   taking corrective action.
+            ///   
+            /// Variable Name: The exception object is assigned to a variable(ex in the example above)
+            ///   that allows you to access information about the exception, such as its message, stack
+            ///   trace, and inner exceptions.
+            ///   
+            /// Multiple Catch Blocks: You can have multiple catch blocks to handle different types of
+            ///     exceptions.The first catch block that matches the exception type will be executed,
+            ///     and subsequent catch blocks will be skipped.
+            ///     
+            /// General catch Block: You can have a general catch block that catches any exception type. 
+            ///    However, using specific catch blocks for known exception types is recommended for better
+            ///    error handling and debugging.
+            ///    
+            /// Catch Filter(when Clause): You can use a when clause to filter exceptions within a catch
+            ///   block.This allows you to add additional conditions to decide whether to handle an
+            ///   exception or not.
+            /// </PointsOfCatch>
+
+            /// we have to know that the order of catch blocks is so important as we start with child 
+            ///   execptions then parants 
+            /// Here in our example the ArtithmeticExecption can't be come befor DividedByZeroExecption
+            ///    as the arthmetic is the parent of DividebyZero, and so on with the genral Execption
+            ///    int the third catch it can't come before any other catch blocks as its the base
+            ///    for all execptions.
+            catch(NegativeNumberExecption ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (DivideByZeroException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("You have to change the vlaue of denominator. ");
+            }
+            catch (ArithmeticException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            ///<FinallyBlock>
+            ///
+            /// The finally block in C# is used in conjunction with the try and catch blocks to ensure that
+            ///    a section of code is executed regardless of whether an exception is thrown or not. 
+            /// The code within the finally block is guaranteed to be executed, even if an exception
+            ///    occurs and is caught by a catch block
+            ///    
+            /// Purpose: The finally block is used for cleanup operations or ensuring that certain code is
+            ///    executed no matter what.
+            ///    
+            /// Execution Order: The finally block is executed after the try block and any catch block(s),
+            ///    regardless of whether an exception occurred or was caught.
+            ///    
+            /// No Exception: If no exception is thrown, the finally block still executes.
+            /// 
+            /// Exception Caught: If an exception is caught in a catch block, the finally block still 
+            ///    executes after the catch block.
+            ///    
+            /// Exception Uncaught: If an exception is not caught, the finally block executes before the
+            ///    exception propagates further.
+            ///     
+            /// Common Use Cases: Releasing resources(such as closing files or network connections) and
+            ///    performing cleanup operations are common use cases for the finally block.
+            ///</FinallyBlock>
+            finally
+            {
+                Console.WriteLine(" we are in finall.");
+            }
+
+            // At the end we have to know that the execption handling with try and catch must be the last soluation
+            //   to protect your code.
+            // we could protect the same code without exectption handling with try and catch which will be more better.
+
+
+            ///<Protective_Programming>
+            /// At the first we have to handle the parse mehod which convert input from user to specific data type.
+            /// To do so we could use "TruParse" method which will return true if the parthing could be happen or
+            ///   return false if the parsing can't be happen without execption fired.
+            ///</Protective_Programming>
+            do
+            {
+                Console.WriteLine("Enter value to x");
+            }
+            while (!int.TryParse(Console.ReadLine(), out x));
+            /// Here this do and while will be execute until the user enter an integer number
+            /// int.TryParse(Console.ReadLine(), out x): mean try the value which user enter if it could be converted
+            ///   to integer then put this value to x and end do while, if not retrun again to do while until the user
+            ///   enter an integer value.
+            do
+            {
+                Console.WriteLine("Enter value to y");
+            }
+            while (!int.TryParse(Console.ReadLine(), out y) ||  y <= 0);
+            // Here the execption will never be fired so we could divid x into y without any execption.
+            z = x / y;
+
+
+            //-----------------------------------------------------------------------------------------------------//
+            ///<Object_Initializer>
+            /// We could create object in differnt ways. one of them is the boring way which we create the object 
+            ///    first then sent data to the public fild in this object one by one.
+            /// The second way is by create object and sent data to the public fild in the same command.
+            /// </Object_Initializer>
+
+            Employee e1 = new Employee();
+            e1.Salary = 7000;
+            e1.BirthDate = new DateTime(1995, 12, 2);
+            e1.Age = DateTime.Now.Year - e1.BirthDate.Year;
+            // This is the boring way.
+
+            Employee e2 = new() { Salary = 10000, BirthDate = new DateTime(1991, 7, 3), Name = "Ahmed" };
+            // This is syntax suger.
+
+            //------------------------------------------------------------------------------------------------------//
+            ///<Copy_Ctor>
+            ///
+            /// If we have an object and we want to create another object has the same data of the original object 
+            ///    in this case if we use equal sign "=" this will make a new refernce refere to the same object 
+            ///    not making a new object, so in this case we will have just one object with two refernces.
+            /// 
+            /// To solve this problem and make a new object with the same data we have to use Copy constructor.
+            /// 
+            /// </Copy_Ctor>
+
+            // The way of using copy constructor is by using new key word and pass the orignal object to the ctor
+            //   but before that we have to implement the ctor in the class to accept the object and copy its data.
+
+            Car oldCar = new Car(1, "BMW", 180);
+            Car newCar = new Car(oldCar);
+            // This will create a new copy of object with the same data.
+            // To make sure these two objects are not the same we could check the hashCode for both of them.
+            Console.WriteLine(oldCar.GetHashCode());
+            Console.WriteLine(newCar.GetHashCode());
+            // both of them will retrun deffernt values which mean they are not the same object.
+
+            //---------------------------------------------------------------------------------------------------//
+            ///<Clone>
+            ///
+            /// There is another way to copy constructor(object) using Clone method, but before using this method 
+            ///   we have to implement the interface "ICloneable" in our class(The class which we will use).
+            ///   
+            ///</Clone>
+
+            // now after implementing the ICloneable interface we could use clone method to make a new copy of object.
+            Car anotherNewCar =(Car) newCar.Clone();
+            // We have to use explicit casting as the Clone method accept any type of object so we have to till
+            //   the engin that it is a car object.
+
+            Console.WriteLine(newCar.GetHashCode());
+            Console.WriteLine(anotherNewCar.GetHashCode());
+            // they will return two different values.
+
+            //---------------------------------------------------------------------------------------------------//
+            ///<Static>
+            ///</Static>
+            
+            // In the Utility class there are two methods which thay are static methods so we could access them without
+            //  create an object of this class, just using class name.
+            Console.WriteLine(Utility.Inch2Cm(40)); // 101.6
+            Console.WriteLine(Utility.Cm2Inch(40)); // 15.748031496062993
+            Console.WriteLine(Utility.CircleArea(10)); // 314
+
+            //--------------------------------------------------------------------------------------------------//
+            ///<One-Instance_Class>
+            ///</One-Instance_Class>
+
+            OneInstanceClass firstInstace = OneInstanceClass.createInstance();
+            OneInstanceClass secondInstace = OneInstanceClass.createInstance();
+            Console.WriteLine(firstInstace.GetHashCode());
+            Console.WriteLine(secondInstace.GetHashCode());
+            // They will return the same value as this class create only one instance.
+
+
+            OneInstanceClass2 thirdInstance = OneInstanceClass2.createInstance();
+            OneInstanceClass2 fourthInstance = OneInstanceClass2.createInstance();
+            Console.WriteLine(thirdInstance.GetHashCode());
+            Console.WriteLine(fourthInstance.GetHashCode());
+            // they eill return the same value.
+
+
+            //--------------------------------------------------------------------------------------------------//
+            ///<Operator-Overloading>
+            ///</Operator-Overloading>
+
+
+            Complex c1 = new Complex()
+            {
+                Real = 10,
+                Imag = 6
+            };
+            Complex c2 = new()
+            {
+                Real = 22,
+                Imag = 7
+            };
+            Complex c3, c4, c5, c6;
+            c3 = c1 + c2;
+            Console.WriteLine(c3.ToString()); // 32 + 13i
+
+            c4 = c2 + 5;
+            Console.WriteLine(c4.ToString()); // 27+7i
+
+            c5 = 5 + c1;
+            Console.WriteLine(c5.ToString()); // 15+6i
+
+            c6 = c2 - c1;
+            Console.WriteLine(c6.ToString()); // 12+1i
+
+            // We didn't overload += operator but when we overload the + operator the += operator will be initialzed by default.
+            c1 += c2;
+            Console.WriteLine(c1.ToString()); // 32+13i
+
+            // Also when we overload - operator then the -= will be overloaded by default.
+            c1 -= c2;
+            Console.WriteLine(c1.ToString()); // 10+6i
+
+            // Unary Arithmatic operator. '-'
+            c1 = -c2;
+            Console.WriteLine(c1.ToString()); // -22+-7i
+
+            c1++;
+            Console.WriteLine(c1.ToString()); // -21+-7i
+            ++c1;
+            Console.WriteLine(c1.ToString()); // -20+-7i
+
+            c1--;
+            Console.WriteLine(c1.ToString()); // -21+-7i
+            --c1;
+            Console.WriteLine(c1.ToString()); // -22+-7i
+
+
+            // Implicit Casting.
+            int number7 = c1;
+            Console.WriteLine(number7); // -22
+
+            // Explicit Casting.
+            double number8 = (double)c1;
+            Console.WriteLine(number8); // -22
+
+            string str7 = (string)c1;
+            Console.WriteLine(str7); // -22+-7i
+
+
+
+
+
+
+
+
 
         }// End of main
 
@@ -1537,6 +1972,88 @@ namespace CSharpCommands
         Read = 0x08, Write = 0b0000_0100, Excute = 2, Delete = 0x1, Admin = 0x0f 
     }
 
+    class Car : IComparable, ICloneable
+    {
+        int id;
+        string model;
+        int speed;
+
+        public int Id { get { return id; } set { id = value; } }
+        public string Model { get { return model; } set { model = value; }  }
+        public int Speed { get {return speed; } set { speed = value; } }
+
+        ///<Constructor_Channign>
+        /// When we have overload of constructor like the following
+        /// public Car(int _id, string _model, int _speed)
+        /// {
+        ///    this.id = _id;
+        ///    this.model = _model;
+        ///    this.speed = _speed;
+        /// }
+        /// 
+        /// public Car(int _id, string _model)
+        /// {
+        ///    this.id = _id;
+        ///    this.model = _model;
+        ///    this.speed = 60;
+        /// }
+        /// 
+        /// public Car(int _id)
+        /// {
+        ///    this.id = _id;
+        ///    this.model = "BMW";
+        ///    this.speed = 60;
+        /// }
+        /// 
+        /// As we see we have three constructors with different parameter, but in all these constructors we implement 
+        ///   the same fields. so we could use constructor channing to make this code more better  
+        /// </Constructor_Channign>
+
+    public Car(int _id, string _model, int _speed)
+        {
+            this.id = _id;
+            this.model = _model;
+            this.speed = _speed;
+        }
+        public Car(int _id, string _model) : this(_id, _model, 60)
+        {
+          
+        }
+        public Car(int _id) : this(_id, "BMW", 60)
+        {
+            
+        }
+        /// by this way we don't have to implement all the fields in each constructor.
+
+
+        ///<Copy_Ctor>
+        /// If we have an object and we want to create another object has the same data of the original object 
+        ///    in this case if we use equal sign "=" this will make a new refernce refere to the same object 
+        ///    not making a new object, so in this case we will have just one object with two refernces.
+        /// 
+        /// To solve this problem and make a new object with the same data we have to use Copy constructor.
+        /// </Copy_Ctor>
+
+        // We have to implement the ctor in the class to accept the object and copy its data.
+        public Car(Car old)
+        {
+            this.model = old.Model;
+            this.speed = old.Speed;
+            this.id = old.Id;
+        }
+
+        public int CompareTo(object? obj)
+        {
+            Car right = (Car)obj;
+            return this.speed.CompareTo(right?.speed);
+        }
+
+        // By implementing this method we could use it to make new copy of object with the same data.
+        public object Clone()
+        {
+            return new Car(this.id, this.model, this.speed);
+        }
+    }
     class Test
     {
         public String testString;
@@ -1547,7 +2064,7 @@ namespace CSharpCommands
         public Test test;
     }
 
-    struct Employee
+    struct Employee : IComparable
     {
         int id;// private fild by default 
 
@@ -1589,7 +2106,7 @@ namespace CSharpCommands
 
         //Auto-Implemented Properties:
         // C# supports auto-implemented properties, which automatically create a private backing field.
-        public String Name { get; set; }
+        public string Name { get; set; }
 
         /*
          * Get Accessor (Getter):
@@ -1660,8 +2177,8 @@ namespace CSharpCommands
         // We could make prop public and get internal or make set private, but the accessor of set or get must ber
         //  mor restrictive than the property which mean if the prop is private we can't make the set or get public
         //    or internal, but if the prop is public we could make set or get public internal or private.
-        Date birthDate;
-        public Date BirthDate
+        DateTime birthDate;
+        public DateTime BirthDate
         {
             get
             {
@@ -1675,12 +2192,26 @@ namespace CSharpCommands
 
         // we have to know that we can't overload property as it the set of property take only one parameter
         // in other way we could say there is no prop take more than one parameter.
-
-
-    
-        public Employee()
+        public override string ToString()
         {
+            return $" Id: {id}, name: {Name}, salary: {Salary}";
         }
+
+
+        public Employee(int id, string name, decimal salary)
+        {
+            this.id = id;
+            this.Name = name;
+            this.salary = salary;
+        }
+
+        public int CompareTo(object? obj)
+        {
+            // first we have to make the parameter obj of type Employee so we have to use unBoxing.
+            Employee temp = (Employee)obj;
+            return this.salary > temp.salary ? 1 : this.salary < temp.salary ? -1 : 0;
+        }
+        
     }
 
     struct phoneBook
@@ -1730,16 +2261,22 @@ namespace CSharpCommands
         ///<Indexer>
         /// Key points about indexers in C#:
         /// Declaration: Indexers are declared with the this keyword followed by the index type in square brackets.
+        /// 
         /// Access Modifiers: Indexers can have access modifiers (public, private, protected, internal).
+        /// 
         /// Get Accessor: The get accessor is executed when the object is accessed using an index.
+        /// 
         /// Set Accessor: The set accessor is executed when a value is assigned to an index.
+        /// 
         /// Usage: Indexers are used with an instance of the containing class, just like arrays.
+        /// 
         /// Multiple Parameters: You can define indexers with multiple parameters if needed, allowing for more complex
         ///   indexing logic.
         ///   
         /// 
         /// Advantages of using indexers:
         /// Consistent Syntax: Indexers provide a consistent and familiar way to access elements, similar to arrays.
+        /// 
         /// Abstraction: Indexers allow you to abstract away the implementation details of how elements are stored and retrieved.
         /// Custom Logic: You can add custom logic inside the indexer's get and set accessors to perform validation, 
         ///    transformation, or other tasks.
@@ -1773,4 +2310,486 @@ namespace CSharpCommands
             get { return index >= 0 && index < size ? $"name: {names[index]} ::: number: {numbers[index]}" : "nothing"; }
         }
     }
+
+    /// <interface>
+    /// An interface in C# is a contract that defines a set of methods, properties, and events that a class or struct
+    /// must implement if it claims to implement that interface. It provides a way to achieve multiple inheritance and 
+    /// allows you to define common behavior that can be implemented by different classes. Interfaces are a key 
+    /// component of achieving polymorphism in C#.
+    /// </interface>
+    interface ISeries
+    {
+        ///<Interface>
+        /// Key points about interfaces in C#:
+        /// Methods, Properties, and Events: Interfaces can define methods, properties, and events that implementing
+        ///   classes must provide.
+        /// Multiple Interfaces: A class or struct can implement multiple interfaces, allowing for multiple 
+        ///   inheritance-like behavior.
+        /// Public Access: Interface members are implicitly public and do not have access modifiers.
+        /// Explicit Implementation: A class implementing an interface can explicitly implement interface members, 
+        ///   providing more control over naming conflicts.
+        /// polymorphism: Interfaces allow you to achieve polymorphism, where you can treat objects of different 
+        ///   classes that implement the same interface in a consistent manner.
+        /// Contract: An interface represents a contract that implementing classes must fulfill.
+        /// No Implementation: Interfaces do not contain implementation details; they define a contract only.
+        /// Interfaces can inherit from other interfaces using a comma-separated list.
+        /// Interfaces cannot contain fields, only properties. Interface members are implicitly abstract and public.
+        /// Classes can implement multiple interfaces.
+        /// Interfaces allow unrelated classes to implement common functionality. They provide abstraction and 
+        ///   polymorphism.
+        /// Interface methods must be implemented by the class using the exact signature defined in the interface.
+        /// Interface members are public by default. An interface cannot contain fields, constructors, destructors or 
+        ///   finalizers.
+        /// A class can inherit from a base class and implement interfaces at the same time. The base class comes 
+        ///   first, then interfaces.
+        /// Interfaces support multiple inheritance but classes do not. This is a key advantage of interfaces.
+        /// Interfaces can extend other interfaces. An interface like IShape can extend IComparable to inherit its members.
+        /// Interfaces can contain static members which belong to the interface itself, not the implementing class.
+        /// Interfaces are often used to enable polymorphic behavior in classes. A reference of interface type can 
+        ///   refer to any object that implements that interfac
+        ///<summary>
+
+
+        // int x;   // get an error as interface can't has a field mermber.
+
+        // interface could have prop
+        public int Currrent { get; }
+
+        // interface could have mehtod without implementaion
+        // interface methods are public by defualt
+        void GetNext();
+        void rest();
+
+        // interface also could have implemented methods
+        void Countagain()
+        {
+            numberOfUsingInterface = 0;
+        }
+
+        // Interfaces can contain static members which belong to the interface itself, not the implementing class.
+       static int numberOfUsingInterface;
+
+        // Interface can't contain constractor.
+    }
+    // Interface methods must be implemented by the class using the exact signature defined in the interface.
+    // when extend interface we have to implement all its method.
+    class SeriesByTwo : ISeries
+    {
+        int current;
+        public int Currrent { get { return current; } }
+
+        public void GetNext()
+        {
+            current += 2;
+        }
+
+        public void rest()
+        {
+            current = 0;
+        }
+    }
+    class FibSeries : ISeries
+    {
+        int current = 1, prev;
+        
+        public int Currrent { get { return current;} }
+
+        public void GetNext()
+        {
+            int temp = current;
+            current = current + prev;
+            prev = temp;
+        }
+
+        public void rest()
+        {
+            current = 1; prev = 0;
+        }
+    }
+
+    /// <Create_your_own_Execption>
+    /// You could create your own execption using a class that extend(Inheret) from Execption class.
+    /// the resone of extend here is that we can't catch any class that not extend from Execption class.
+    /// </Create_your_own_Execption>
+    class NegativeNumberExecption : Exception
+    {
+        public NegativeNumberExecption() : base(" The number must be postive.") { }
+
+        
+    }
+
+    /// <Contaner-Class>
+    /// 
+    /// A static class in C# is a special type of class that cannot be instantiated like regular classes. It's designed
+    ///  to be a container for static members, including static fields, static properties, and static methods. A static
+    ///  class is often used to group related utility functions or constants together in a structured manner, without
+    ///  the need for object instances.
+    ///  
+    /// 
+    /// A static class cannot be instantiated using the new keyword.
+    /// To use class as a container to only static member we have to use staic keyword in the signuture of class.
+    /// NO objects could be created form this class.
+    /// It cannot contain instance members (non-static fields, properties, or methods).
+    /// It cannot be used as a base class, and it cannot inherit from other classes
+    /// It is implicitly sealed, meaning it cannot be inherited by other classes.
+    /// 
+    /// Use Cases:
+    /// Utility Functions: Static classes are commonly used to group utility functions and helper methods together.
+    ///   These methods are typically independent of instance-specific data and are called using the class name.
+    /// 
+    /// Math Libraries: Static classes can be used to encapsulate mathematical operations, conversion methods, and 
+    ///   other calculations.
+    ///   
+    /// Constants: Static classes can be used to define constants that are used throughout the application.
+    /// 
+    /// Factory Methods: Static classes can be used to provide factory methods that create instances of other classes.
+    ///  
+    /// </Contaner-Class>
+    static class Utility
+    {
+      
+        ///<Static>
+        /// Static members in C# belong to the type itself, rather than to an instance of the type. This means that all
+        ///   instances of the type share the same static member, and you can access static members without creating an
+        ///   instance of the type.
+        ///   
+        /// Static members include:
+        /// 
+        /// Static Fields: Variables that are shared among all instances of the class.
+        /// Static Properties: Properties that are shared among all instances of the class.
+        /// Static Methods: Methods that can be called on the type itself, without creating an instance.
+        /// 
+        /// Benefits of Static Members:
+        /// 
+        /// Shared Data: Static members are shared across all instances of the class, making them suitable for storing
+        ///   data that should be consistent among instances.
+        /// Utility Methods: Static methods can be used to create utility functions that don't require 
+        ///   instance-specific data.
+        /// Singleton Pattern: Static members can be used to implement the Singleton pattern, ensuring only one
+        ///   instance of a class exists.
+        /// 
+        ///</Static>
+
+        ///<StaticFields>
+        ///
+        /// Static fields are declared using the static keyword within a class. They are associated with the type 
+        ///   itself rather than instances of the class.
+        /// Static fields are shared among all instances of the class. If you modify the value of a static field, the
+        ///   change is reflected across all instances and other parts of your program that access the field.
+        /// Static fields are typically used for data that should be consistent across instances.For example,
+        ///   you might use a static field to keep track of the total number of instances created for a class.
+        ///   
+        /// Static Attributes Allocate in heap before first usage of class till the end of program.
+        /// Static members initalized to default values by default.
+        ///</StaticFields>
+
+        
+        static double PI;
+
+        ///<StaticConstructor>
+        ///
+        /// A static constructor is used to initialize static members of a class. It is defined using the static
+        ///    keyword and doesn't take any parameters. A static constructor is automatically called before any static
+        ///    members are accessed or any static methods are called.
+        /// static constructor are execute automaticlly once in the life time of programe before any usage of class.
+        /// 
+        /// Static Constructor can't specify return DataType, Access Modifier or Input Parameter.
+        /// Maximum only one static Constructor per class.
+        ///</StaticConstructor>
+        // Object ctor is not the right place to initializing static filds, but the best place to initialize static
+            //   members is in static Ctor.
+        static Utility()
+        {
+            PI = 3.14;
+        }
+
+        
+        /// <StaticMethods>
+        /// 
+        /// Static methods are defined using the static keyword in their method signature.They belong to the type
+        ///   itself, not to instances of the class.
+        /// Static methods can be called using the type name, without creating an instance.They can't access
+        ///   instance-specific data or instance methods directly.
+        /// Static methods are often used for utility functions, operations that don't require instance-specific state
+        ///   , and factory methods.
+        /// Static methods are also used to access static filds(Attribute, property).
+        ///   
+        /// </StaticMethods>
+        
+        // As we see here we have two functions that not depend on the vlaue of object fields so we could call them 
+        //  without create a new object of this class by the name of class directily using static in methods sitgnature
+        public static double Cm2Inch(double cm)
+        {
+            return cm / 2.54;
+        }
+        public static double Inch2Cm(double Inch)
+        {
+            return Inch * 2.54;
+        }
+
+        public static double CircleArea(double R)
+        {
+            return PI * R * R;
+        }
+
+
+        
+    }
+
+
+    class OneInstanceClass
+    {
+        public int Data { get; private set; }
+
+        ///<Private-Constructor>
+        ///
+        /// A private constructor in C# is a constructor defined with the private access modifier within a class. 
+        /// Unlike public constructors, a private constructor can only be accessed and used within the class itself.
+        /// It cannot be accessed from outside the class or be used to create instances of the class directly. 
+        /// Private constructors are often used for various purposes, such as enforcing design patterns, controlling 
+        /// object creation, and implementing singleton patterns.
+        /// 
+        /// Common Use Cases:
+        /// 
+        /// 1. Singleton Pattern: A private constructor is often used when implementing the Singleton pattern.
+        ///    In this pattern, a class ensures that it has only one instance and provides a global point of access to
+        ///   that instance.
+        ///   
+        /// 2. Static Classes with No Instances:A class with only static members and methods can have a private 
+        ///   constructor to prevent accidental instantiation.This enforces that the class is used as intended,
+        ///   without creating instances.
+        ///   
+        /// 3. Factory Methods: A class might have private constructors and public factory methods that control the 
+        ///    creation of instances.This allows the class to control the creation process, enforce certain conditions,
+        ///    or provide different object variations.
+        /// 
+        /// 4. Utility Classes:Private constructors are useful in utility classes that contain only static members.
+        ///    They prevent unnecessary instance creation and enforce the intended usage.
+        ///    
+        /// </Private-Constructor>
+
+
+        // To make this class has only one instance from it we can't use factory function is the figuar like this
+        /*
+         * 
+         * public static OneInstancClass createInstance()
+         * {
+         *      return new oneInstanxeClass(1221);
+         * }
+         * 
+         */
+        // This way of implement this factory function will allow to create new object evey time we call this method
+        //  this is not the way we need to use this class. we need this class to create just one object all the 
+        //    the lifetime of this class. 
+        // In this case we have to create an attribute with the same type of the class, and make this attribute static
+        //    then we could check this attribute in the factory function to see if this atttribute is null then we 
+        //    will creat a new instance of to this refernce attribute, but if this attribute is already sign to 
+        //    object of this class then we will not create a new object... by this way we could make this class
+        //    single instance class.
+
+        // Note: we can't create this attribute in the factory method as this attribute will end with the end of method
+        //  so we have make it static arribute in this class to be work till the programe end.
+
+        static OneInstanceClass singleInstance;
+        private OneInstanceClass(int data)
+        {
+            this.Data = data;
+        }
+
+        // Factory method that control object creation.
+        
+        public static OneInstanceClass createInstance()
+        {
+            // by this way we make sure that this class is single instance class.
+            if (singleInstance == null)
+                singleInstance = new OneInstanceClass(1221);
+            return singleInstance;
+        }
+
+        // BIG NOTE: AFTER DONIGN ALL OF THEIS I HAVE TO SAY THAT THIS IS NOT HE BEST WAY TO CREATE A SINGLE INSTACE
+        //   OF CLASS AS THIS WAY HAS PROBLEM WITH THREADS SAFETY.
+        /*
+         * Thread Safety:Static members can be accessed concurrently by multiple threads, so it's important to consider
+         *  thread safety when working with them.
+         *  Proper synchronization mechanisms, such as locks, might be needed to ensure correct behavior in 
+         *  multi-threaded scenarios
+         */
+
+        // To handle this problem we will create a new class with name "OneInstanceClass2" and solve this problem
+        //  in it.
+
+
+    }
+    class OneInstanceClass2
+    {
+        // To handle the problem of thead safety we will creat a static constructor and implement the singlInstance
+        //   attribute in this static constructor, as we know the static Ctor is execute once in all the lifetime of 
+        //   the programe so when we implement the singlInstance attribute inside it, it will be implemented once 
+        //   and also solve the problem of thread safety.
+        // In this case we will use the factory mothod to access this singlInstance attribute not to create it.
+        // 
+        // also we could make the singleIstance as a property as initialzie it without using static Ctor 
+        //  public static OneInstanceClass2 singleInstance{get;} = new OneInstanceClass2(1221); 
+        // this line of code could be used instead of using static Ctor and factory method .
+        public int Data { get; private set; }
+
+     
+        
+
+        static OneInstanceClass2 singleInstance;
+        static OneInstanceClass2()
+        {
+            singleInstance = new OneInstanceClass2(1221);
+        }
+        private OneInstanceClass2(int data)
+        {
+            this.Data = data;
+        }
+
+        // Factory method that control object creation.
+
+        public static OneInstanceClass2 createInstance()
+        {
+
+            return singleInstance;
+        }
+
+    }
+
+    class Complex
+    {
+        ///<Operator-Overloading>
+        ///
+        /// Operator overloading in C# allows you to define custom behavior for operators when they are used with
+        ///   instances of your own classes. This feature enables you to extend the capabilities of your classes by
+        ///   allowing them to interact with operators like +, -, *, /, ==, !=, etc. in a way that makes sense for your
+        ///   application's domain.
+        ///   
+        /// Operators that Can Be Overloaded:
+        /// 
+        /// Not all operators in C# can be overloaded. The following operators can be overloaded:
+        /// 1. Unary Operators: +, -, !, ~, ++, --
+        /// 2. Binary Operators: +, -, *, /, %, &, |, ^, <<, >>
+        /// 3. Comparison Operators: ==, !=, <, >, <=, >=
+        /// 4. Conversion Operators: Explicit and implicit type conversion operators
+        /// 
+        /// Squer bracket and equal sign can't be overloaded.
+        /// 
+        /// How to Overload an Operator:
+        /// To overload an operator, you define a special static method in your class with the name operator followed by 
+        ///   the operator's symbol. This method must be marked as public and static, and it must return a value of the 
+        ///   appropriate type.
+        ///    
+        /// </Operator-Overloading>
+
+
+        // For example, let's overload the + operator for a ComplexNumber class:
+        public int Real { get; set; }
+        public int Imag { get; set; }
+
+        // Operator Overloading must be public static method.
+
+        public static Complex operator + (Complex left, Complex right)
+        {
+            return new Complex
+            {
+                // to make this code safe we have to use nullable
+                Real = (left?.Real??0) + (right?.Real??0),
+                Imag = (left?.Imag??0) + (right?.Imag??0)
+            };
+        }
+
+        public static Complex operator + (Complex left, int right)
+        {
+            return new Complex
+            {
+                Real = (left?.Real ?? 0) + right,
+                Imag = left.Imag
+            };
+        }
+
+        public static Complex operator + (int right, Complex left )
+        {
+            return new Complex
+            {
+                Real = (left?.Real ?? 0) + right,
+                Imag = left.Imag
+            };
+        }
+        public static Complex operator - (Complex left, Complex right)
+        {
+            return new Complex
+            {
+                Real = (left?.Real ?? 0) - (right?.Real ?? 0),
+                Imag = (left?.Imag ?? 0) - (right?.Imag ?? 0)
+            };
+        }
+
+        public static Complex operator - (Complex c)
+        {
+            return new Complex
+            {
+                Real = - c.Real,
+                Imag = - c.Imag
+            };
+        }
+
+        // Used for Both pre fix and postfix version (++c, c++)
+        public static Complex operator ++ (Complex c)
+        {
+            return new Complex
+            {
+                Real = c.Real + 1,
+                Imag = c.Imag
+            };
+        }
+
+        // Used for Both pre fix and postfix version (--c, c--)
+        public static Complex operator -- (Complex c)
+        {
+            return new Complex
+            {
+                Real = c.Real - 1,
+                Imag = c.Imag
+            };
+        }
+
+        // if you overload any type of comaprasoin operator then you have to overload the opesite one.
+        public static bool operator > (Complex left, Complex right)
+        {
+            if (left.Real == right.Real) 
+                return left.Imag > right.Imag;
+            return left.Real > right.Real;
+        }
+
+        public static bool operator < (Complex left, Complex right)
+        {
+            if (left.Real == right.Real)
+                return left.Imag < right.Imag;
+            return left.Real < right.Real;
+        }
+        public override string ToString()
+        {
+            return $"{Real}+{Imag}i";
+        }
+
+
+        // Implicit casting: when we overload implicit cast there will be no return type to the method.
+        public static implicit operator int(Complex c)
+        {
+            return c?.Real??0;
+        }
+
+        // Explicit casting: when we overload Explicit cast there will be no return type to the method.
+        public static explicit operator double(Complex c)
+        {
+            return (c?.Real ?? 0);
+        }
+
+        public static explicit operator string(Complex c)
+        {
+            return c?.ToString()?? "null";
+        }
+    }
+
 }
