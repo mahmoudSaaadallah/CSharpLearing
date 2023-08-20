@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Diagnostics;
@@ -1721,11 +1722,76 @@ namespace CSharpCommands
             string str7 = (string)c1;
             Console.WriteLine(str7); // -22+-7i
 
+            //-------------------------------------------------------------------------------------------------------//
+            ///<Equality>
+            ///
+            /// There are differnet ways to check equality in c#:
+            /// First we have to know the type of equality in programming:
+            /// There are two types of equality in c#:
+            /// 
+            /// 1. Identity equality (Reference equality): This type of equality is depened on the reference so if we 
+            ///     have two references refere to the same object then they are equal, but if we have two refernces 
+            ///     refere to two differenct objects then they will not identity equal even if they have the same data.
+            ///     
+            /// 2. Value equality: This type of equality is depened on the value not the reference so  if we 
+            ///     have two references refere to the same object then they are equal as they have the same data value
+            ///     also if we have two refernces refere to the two different objects then they are equal if they 
+            ///     have the same data value.
+            ///     
+            /// </Equality>
+
+
+            ///<Class_Equality>
+            ///
+            /// Class Equality is system object members. it has different ways to check equality:
+            /// 
+            /// 1. public virtual bool equals(object o){} : it's refernce equality.
+            /// 2. public static bool equals(object o1, object o2){} : it's refernce equality  but we have to know that
+            ///     this function is used to call the first function as if we look at the body of this function we will
+            ///     find it like that: { return o1.equals(o2);}. 
+            ///     
+            /// 3. public static ReferenceEquals(object o1, object o2){} : it's reference equality.
+            /// 
+            /// Note: you have to know that the first function could be change by override then the second function
+            ///       will be changed as it call the first function, but the third function couldn't be overrided as 
+            ///       it's static function so it will be always refernce equality.
+            ///       
+            /// 4. Operator == : it's refernce equality.
+            /// 
+            /// To make a function value equality we could override the first function to make it value equality.
+            /// 
+            /// </Class_Equality>
+
+            Point firstPoint = new Point() { x = 10, y = 51 };
+            Point secondPoint = new Point() { x = 10, y = 51 };
+            Point thirdPoint = firstPoint;
+
+            if (firstPoint.Equals(secondPoint))
+                Console.WriteLine("first Point = second point");
+            else
+                Console.WriteLine("first point != second point");
+
+            if (firstPoint.Equals(thirdPoint))
+                Console.WriteLine("first Point = third point");
+            else
+                Console.WriteLine("first point != third point");
 
 
 
-
-
+            ///<Struct_Equality>
+            ///
+            /// Class Equality is system.valueType object members. it has different ways to check equality:
+            /// The system.ValueType change the way of equal working to value equality.
+            /// 
+            /// 1. public virtual bool equals(object o){} : it's value equality.
+            /// 2. public static bool equals(object o1, object o2){} : it's value equality  but we have to know that
+            ///     this function is used to call the first function as if we look at the body of this function we will
+            ///     find it like that: { return o1.equals(o2);}. 
+            /// 
+            /// 3. public static ReferenceEquals(object o1, object o2){} : it's not suitable to be used with values.
+            /// 
+            /// 4. Operator == : it's not automaticlly emplemented, so to use it you have to implement it(overload).
+            /// </Struct_Equality>
 
 
 
@@ -2792,4 +2858,71 @@ namespace CSharpCommands
         }
     }
 
+    class Point
+    {
+        public int x { get; set; }
+        public int y { get; set; }
+
+        // This the worst implementation for equals function as it is not secure. 
+        //  if we see that the equals function is accept object parameter this object may be any type of ebject not 
+        //   only point object it could be string or employee or any thing, but in the first line in the method we cast
+        //   that object to point which will return an execption(invalid cast execption) if the passed object not
+        //   a point object.
+        /*
+         *  public override bool Equals(object? obj)
+            {
+                Point p = (Point)obj; // unsafe casting.
+                return this.x == p.x && this.y == p.y ? true : false;   
+            } 
+         */
+
+        // so we could could handle this way of casting using 'is' which will return true or false without any execption
+        // or we could use 'as' which return null if the casting fail.
+        public override bool Equals(object? obj)
+        {
+            // We have to know that may be the Point class is a base class to another class so if we pass a child class
+            //   to this method and this child class has the same date like the base class then this method will 
+            //   retrun true even if the child object not the same type of Point class. for example
+            /*
+             *   class point3D : Point
+             *   {
+             *      public int z {get; set;}
+             *   }
+             *   
+             */
+            // now if the object of type point3D is used to passed to this method and this object has value like
+            //   x = 5, y = 6 and z = 15;   and we compere it with other object of type Point which has value like 
+            //   x = 5, and y = 6, then this method will retrun true which is not correct so we have to handle this 
+            //   case using getType method which retrun the type of the object form meta data.
+
+            if (obj.GetType() != this.GetType()) // this will check the type of objects and retrun false if they are
+                                                 // not the same type.
+                return false;
+
+            // Also we could use a condation which will increase the preformance this check if the two object are 
+            //   equal by indentity as if they are equal by indentity then we don't have to check every member of 
+            //   these objects.
+            if (Object.ReferenceEquals(this, obj)) return true; // this will increase preformance.
+
+            if (obj == null) // this used to handle null values.
+                return false; 
+            if (obj is Point)//  is return false if the casting fail, no execpion will be returned. 
+            {
+                Point p = (Point)obj;
+                return this.x == p.x && this.y == p.y ? true : false;
+            }
+            else 
+                return false;
+
+            /// As and Is used with refernce data type so we can't use them with struct as it is value type.
+            /*
+             *    
+             *    Point p = obj as Point;
+             *    if(p == null)
+             *       retrun false;
+             *    return this.x == p.x && this.y == p.y ? true : false;
+             *    
+             */
+        }
+    }
 }
