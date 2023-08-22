@@ -634,7 +634,7 @@ namespace CSharpCommands
             // Pass By Reference:
             // C# is pass by reference or value language not like java which is pass by value only.
             // In swapByValue method we pass by value here so when we pass any data to this method, we just pass copy of 
-           //    this data not the original data.
+            //    this data not the original data.
 
             /*
               * static void swapByValue(int x, int y)
@@ -911,15 +911,15 @@ namespace CSharpCommands
             ///    we create a new object with new data.
             String orignalString = "Original String.";
             Console.WriteLine(orignalString);//Original String.
-            String cloneString = (string)orignalString.Clone(); 
+            String cloneString = (string)orignalString.Clone();
             Console.WriteLine(cloneString.GetHashCode());//126706928
             Console.WriteLine(orignalString.GetHashCode());//126706928
             Console.WriteLine(cloneString);//Original String.
             cloneString = "original String edied.";
             Console.WriteLine(orignalString);//Original String.
             Console.WriteLine(cloneString);//original String edied.
-          
-            
+
+
 
             //----------------------------------/
             /// 2.Compare()
@@ -1163,7 +1163,7 @@ namespace CSharpCommands
             /// 
             /// To call struct we use the new keyword like calling class, but even if we didn't use new keyword
             ///  the engin will allocate it in memory as it is a vlaue type not refernce type like class.
-            Common c = new Common(0,0,0);
+            Common c = new Common(0, 0, 0);
             Console.WriteLine(c.publicFild);
             Console.WriteLine(c);// it will call atomaticlly ToString method as we override it in struct.
 
@@ -1214,7 +1214,7 @@ namespace CSharpCommands
             // enum is an intger values with lables.
             // like in our example here sunday is 0 with lable Sunday, monday is 1 with lable Monday and so on.
             // so we could say DaysOfTheWeek day4 = (DaysOfTheWeek) 4; and it will return Thursday.
-            DaysOfTheWeek day4 = (DaysOfTheWeek) 4;
+            DaysOfTheWeek day4 = (DaysOfTheWeek)4;
             Console.WriteLine(day4); // Thursday.
 
             // if we give it a value not in the enum like 10 and we know Days of the week is 7 then it will return the same passed value.
@@ -1276,7 +1276,7 @@ namespace CSharpCommands
             // so to check if the read flage is used then we have to make an expression with and operator.
             if ((p1 & Premission.Read) == Premission.Read)
                 Console.WriteLine(true);
-            else 
+            else
                 Console.WriteLine(false);
             // false.
 
@@ -1325,20 +1325,20 @@ namespace CSharpCommands
             }
 
 
-        //--------------------------------------------------------------------------------------------------//
-        ///<foreach>
-        /// The foreach statement in C# is used to iterate over elements in a collection (such as arrays, lists, or
-        ///    any type that implements the IEnumerable interface) without the need for explicit indexing or manual
-        ///    iteration. It simplifies the process of looping through each element of a collection, making the 
-        ///    code more concise and readable.
-        ///  
-        /// foreach (var element in collection)
-        /// {
-        ///         // Code to be executed for each element
-        /// }
-        /// element: Represents the current element being iterated over.
-        /// collection: The collection(or object implementing IEnumerable) to be iterated.
-        /// </foreach>
+            //--------------------------------------------------------------------------------------------------//
+            ///<foreach>
+            /// The foreach statement in C# is used to iterate over elements in a collection (such as arrays, lists, or
+            ///    any type that implements the IEnumerable interface) without the need for explicit indexing or manual
+            ///    iteration. It simplifies the process of looping through each element of a collection, making the 
+            ///    code more concise and readable.
+            ///  
+            /// foreach (var element in collection)
+            /// {
+            ///         // Code to be executed for each element
+            /// }
+            /// element: Represents the current element being iterated over.
+            /// collection: The collection(or object implementing IEnumerable) to be iterated.
+            /// </foreach>
 
             int[] arr = { 10, 5, 8, 7, 9, 2, 1, 3 };
             Array.Sort(arr); // this is used to sort array.
@@ -1414,11 +1414,11 @@ namespace CSharpCommands
             /// You can have multiple catch blocks to handle different types of exceptions.
             /// The first catch block that matches the thrown exception's type will be executed.
             /// </Execption_Handling>
-            
+
 
             int x, y, z;
 
-            
+
             // here we don't know what type of input will the uset enter may be the user will enter char 
             //   which will trow an execption or enter a string.
             // To handle these satates we could use try block.
@@ -1502,7 +1502,7 @@ namespace CSharpCommands
             ///    as the arthmetic is the parent of DividebyZero, and so on with the genral Execption
             ///    int the third catch it can't come before any other catch blocks as its the base
             ///    for all execptions.
-            catch(NegativeNumberExecption ex)
+            catch (NegativeNumberExecption ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -1572,7 +1572,7 @@ namespace CSharpCommands
             {
                 Console.WriteLine("Enter value to y");
             }
-            while (!int.TryParse(Console.ReadLine(), out y) ||  y <= 0);
+            while (!int.TryParse(Console.ReadLine(), out y) || y <= 0);
             // Here the execption will never be fired so we could divid x into y without any execption.
             z = x / y;
 
@@ -1624,7 +1624,7 @@ namespace CSharpCommands
             ///</Clone>
 
             // now after implementing the ICloneable interface we could use clone method to make a new copy of object.
-            Car anotherNewCar =(Car) newCar.Clone();
+            Car anotherNewCar = (Car)newCar.Clone();
             // We have to use explicit casting as the Clone method accept any type of object so we have to till
             //   the engin that it is a car object.
 
@@ -1635,7 +1635,7 @@ namespace CSharpCommands
             //---------------------------------------------------------------------------------------------------//
             ///<Static>
             ///</Static>
-            
+
             // In the Utility class there are two methods which thay are static methods so we could access them without
             //  create an object of this class, just using class name.
             Console.WriteLine(Utility.Inch2Cm(40)); // 101.6
@@ -1792,6 +1792,105 @@ namespace CSharpCommands
             /// 
             /// 4. Operator == : it's not automaticlly emplemented, so to use it you have to implement it(overload).
             /// </Struct_Equality>
+
+
+
+            //------------------------------------------------------------------------------------------------//
+            ///<Virtual_Methods>
+            ///
+            /// In C#, a virtual method is a method declared in a base class (or an interface) that can be overridden
+            ///  in derived classes. The virtual keyword is used to declare a method as virtual, which means that it
+            ///  can be replaced with a different implementation in subclasses. This concept is fundamental to 
+            ///  achieving polymorphism and enabling runtime method dispatch based on the actual type of an object.
+            ///  
+            /// </Virtual_Methods>
+
+            TypeA BaseRef = new TypeA(12);
+            BaseRef.staticllyBindedShow(); // base.
+            BaseRef.DynamicllyBindedShow(); // base.
+
+            TypeB drivedRef = new TypeB(4, 9);
+            drivedRef.staticllyBindedShow(); // drived.
+            drivedRef.DynamicllyBindedShow();// drived.
+
+            BaseRef = new TypeB(4, 8);
+            /// Refernce to base = Drived object.   This mean i could use the part of Reference in drived, but i 
+            ///    couldn't use the part of drived itself. So i could say BaseRef.A = 10; , but i couldn't say 
+            ///    BaseRef.B = 10;
+            BaseRef.A = 10;
+            //BaseRef.B = 10;// Error.
+
+            BaseRef.staticllyBindedShow(); // base.
+            /// All the statically Binded Methods(non virtual) the compiler Bind call based in Refernce type not object
+            ///   type.
+
+            BaseRef.DynamicllyBindedShow();// drived
+            /// Dynamiclly Binded method, CLR will bind function Call based on object Type in Runtime.
+
+            BaseRef = new TypeC(10, 5, 6);
+
+            BaseRef.DynamicllyBindedShow();// TypeC.
+
+            BaseRef = new TypeD(10, 8, 6, 5);
+            BaseRef.DynamicllyBindedShow(); // TypeC. as the last class that use this method with keyword override is
+                                            // the TypeC class. 
+                                            // To access the DynamicllyBindedShow() method in TypeD class then we have to use refernce of typeD as this
+                                            //   method is implemented with keyword new in TypeD class.
+            TypeD RefD = new TypeD(85, 5, 6, 7);
+            RefD.DynamicllyBindedShow(); // TypeD.
+
+            // if we create a new class that inhert from TypeD class then the new class will not be able to see the 
+            //  DynamicllyBindedShow method in TypeC it will be able to see only the new implemented method in TypeD.
+            // Also we could make this mehtod as new virtual in typeD class to be overrided in the drived classes 
+            // form this class.
+
+            //--------------------------------------------------------------------------------------------------//
+            ///<Generic>
+            ///
+            /// Let's have an example to know the benfit of using generic let's consider that i have a class Helper
+            ///   which has one method (swap()) method this mehtod is used to swap two interger numbers, so when i 
+            ///   pass two integer number to it, it will work, but if i try to pass two double numbers to it it will 
+            ///   return an error as it's not accept any double numbers.
+            ///   
+            /// </Generic>
+            int numberX = 10, numberY = 6;
+            Helper.swap(ref numberX, ref numberY);
+            Console.WriteLine(numberX); // 6
+            Console.WriteLine(numberY); // 10
+
+            double n1 = 1.54, n2 = 66.656;
+            // if i try using swap function to swap these two double numbers it will retrurn error as the swap function
+            //   doesn't accept double numbers.
+            // Helper.swap(ref n1, ref n2); // Error.
+            // the same thing will happen if we try to swap any two data type execpt integer.so the only way to solve 
+            //    this problem is by overload the swap function to accept double and also overload it to accept string
+            //    and so on with all data type, but this way will be too long and take lot of memory and time, so 
+            //    to solve it we could use generic.
+
+            /// by suing a Generic method to swap we could use single method to deal with all data type even with 
+            /// refernce data type.
+            /// now after implement generic method to swap so we could use it with any data type.
+
+            Helper.swap(ref n1, ref n2); // i could call it like this way or i could explicitly define the type of T.
+            Helper.swap<int>(ref numberX, ref numberY); // This is the way by explicit the type of T.
+            Console.WriteLine($"n1 {n1}");//66.656
+            Console.WriteLine($"n2 {n2}");//1.54
+
+            string str1 = "one", str2 = "two";
+            Helper.swap(ref str1, ref str2);
+            Console.WriteLine($"str1: {str1}"); // two.
+            Console.WriteLine($"str2: {str2}"); // one.
+            // In case of generic method (not generic class or struct or interface) compiler can detect Type parameter
+            //   T type from input parameter, but in case of class or interface i have to Explicit the type.
+
+            // The pervious case i use generic in method, but what about if i use the generic to the class Helper2.
+            // When using generic class the way of calling will be change.As in the calling we have to specife the type
+            //   of T.
+            string str3 = "three", str4 = "four";
+            Helper2<string>.swap(ref str3, ref str4); // here i have to explicit the type of T.
+            Console.WriteLine($"str3 {str3}"); // four.
+            Console.WriteLine($"str4 {str4}"); // three.
+
 
 
 
@@ -1952,11 +2051,11 @@ namespace CSharpCommands
             this.publicFild = pulicFild;
 
         }
-        public void print() 
+        public void print()
         {
             Console.WriteLine($"PublicFild: {publicFild} \n" +
                 $"internalFild: {internalFild} \n" +
-                $"privterFild: {privateFild}" );
+                $"privterFild: {privateFild}");
         }
         public override string ToString()
         {
@@ -2015,7 +2114,7 @@ namespace CSharpCommands
         softWare = 101,
         hardWare = 201,
         programming = 301,
-        security = 401, 
+        security = 401,
         projectManagement,// it will take 402 by default as the previous one has 401 value.
         network // 403
     }
@@ -2035,7 +2134,7 @@ namespace CSharpCommands
     //    a commbsion of two or more flags using OR, AND or XOR.
     enum Premission : byte
     {
-        Read = 0x08, Write = 0b0000_0100, Excute = 2, Delete = 0x1, Admin = 0x0f 
+        Read = 0x08, Write = 0b0000_0100, Excute = 2, Delete = 0x1, Admin = 0x0f
     }
 
     class Car : IComparable, ICloneable
@@ -2045,8 +2144,8 @@ namespace CSharpCommands
         int speed;
 
         public int Id { get { return id; } set { id = value; } }
-        public string Model { get { return model; } set { model = value; }  }
-        public int Speed { get {return speed; } set { speed = value; } }
+        public string Model { get { return model; } set { model = value; } }
+        public int Speed { get { return speed; } set { speed = value; } }
 
         ///<Constructor_Channign>
         /// When we have overload of constructor like the following
@@ -2075,7 +2174,7 @@ namespace CSharpCommands
         ///   the same fields. so we could use constructor channing to make this code more better  
         /// </Constructor_Channign>
 
-    public Car(int _id, string _model, int _speed)
+        public Car(int _id, string _model, int _speed)
         {
             this.id = _id;
             this.model = _model;
@@ -2083,11 +2182,11 @@ namespace CSharpCommands
         }
         public Car(int _id, string _model) : this(_id, _model, 60)
         {
-          
+
         }
         public Car(int _id) : this(_id, "BMW", 60)
         {
-            
+
         }
         /// by this way we don't have to implement all the fields in each constructor.
 
@@ -2123,7 +2222,7 @@ namespace CSharpCommands
     class Test
     {
         public String testString;
-        
+
     }
     class Test2
     {
@@ -2147,7 +2246,7 @@ namespace CSharpCommands
         /// Code Maintainability: If you need to change how data is stored or computed, you only need to update the 
         /// property implementation.
         ///</Advantages>
-        
+
         // we have to know that we can't overload property as it the set of property take only one parameter
         // in other way we could say there is no prop take more than one parameter.
 
@@ -2186,7 +2285,7 @@ namespace CSharpCommands
             It is optional. If omitted, the property is read-only.
          */
         decimal salary;
-        public Decimal Salary 
+        public Decimal Salary
         {
             // To make a prop that has an implemented get and set we have to use a private fild like using private salary 
             //   in the get here we don't use the Salary with capital S, but we use salary which is the name of fild
@@ -2197,9 +2296,9 @@ namespace CSharpCommands
             {
                 return salary;
             }
-            set 
-            { 
-                salary = value >= 1300? value : 1300;
+            set
+            {
+                salary = value >= 1300 ? value : 1300;
             }
 
         }
@@ -2209,7 +2308,7 @@ namespace CSharpCommands
         ///  These properties can be set only within the constructor or through internal logic
         /// </Read-Only Properties:>
         int department;
-        public int Department 
+        public int Department
         {
             get
             {
@@ -2250,7 +2349,7 @@ namespace CSharpCommands
             {
                 return birthDate;
             }
-            internal set 
+            internal set
             {
                 birthDate = value;
             }
@@ -2277,7 +2376,7 @@ namespace CSharpCommands
             Employee temp = (Employee)obj;
             return this.salary > temp.salary ? 1 : this.salary < temp.salary ? -1 : 0;
         }
-        
+
     }
 
     struct phoneBook
@@ -2362,7 +2461,7 @@ namespace CSharpCommands
             }
         }
         // Now I could overload this indexer
-        public long this[long  index, string name] 
+        public long this[long index, string name]
         {
             set
             {
@@ -2433,7 +2532,7 @@ namespace CSharpCommands
         }
 
         // Interfaces can contain static members which belong to the interface itself, not the implementing class.
-       static int numberOfUsingInterface;
+        static int numberOfUsingInterface;
 
         // Interface can't contain constractor.
     }
@@ -2457,8 +2556,8 @@ namespace CSharpCommands
     class FibSeries : ISeries
     {
         int current = 1, prev;
-        
-        public int Currrent { get { return current;} }
+
+        public int Currrent { get { return current; } }
 
         public void GetNext()
         {
@@ -2481,7 +2580,7 @@ namespace CSharpCommands
     {
         public NegativeNumberExecption() : base(" The number must be postive.") { }
 
-        
+
     }
 
     /// <Contaner-Class>
@@ -2513,7 +2612,7 @@ namespace CSharpCommands
     /// </Contaner-Class>
     static class Utility
     {
-      
+
         ///<Static>
         /// Static members in C# belong to the type itself, rather than to an instance of the type. This means that all
         ///   instances of the type share the same static member, and you can access static members without creating an
@@ -2549,7 +2648,7 @@ namespace CSharpCommands
         /// Static members initalized to default values by default.
         ///</StaticFields>
 
-        
+
         static double PI;
 
         ///<StaticConstructor>
@@ -2563,13 +2662,13 @@ namespace CSharpCommands
         /// Maximum only one static Constructor per class.
         ///</StaticConstructor>
         // Object ctor is not the right place to initializing static filds, but the best place to initialize static
-            //   members is in static Ctor.
+        //   members is in static Ctor.
         static Utility()
         {
             PI = 3.14;
         }
 
-        
+
         /// <StaticMethods>
         /// 
         /// Static methods are defined using the static keyword in their method signature.They belong to the type
@@ -2581,7 +2680,7 @@ namespace CSharpCommands
         /// Static methods are also used to access static filds(Attribute, property).
         ///   
         /// </StaticMethods>
-        
+
         // As we see here we have two functions that not depend on the vlaue of object fields so we could call them 
         //  without create a new object of this class by the name of class directily using static in methods sitgnature
         public static double Cm2Inch(double cm)
@@ -2599,7 +2698,7 @@ namespace CSharpCommands
         }
 
 
-        
+
     }
 
 
@@ -2663,7 +2762,7 @@ namespace CSharpCommands
         }
 
         // Factory method that control object creation.
-        
+
         public static OneInstanceClass createInstance()
         {
             // by this way we make sure that this class is single instance class.
@@ -2699,8 +2798,8 @@ namespace CSharpCommands
         // this line of code could be used instead of using static Ctor and factory method .
         public int Data { get; private set; }
 
-     
-        
+
+
 
         static OneInstanceClass2 singleInstance;
         static OneInstanceClass2()
@@ -2755,17 +2854,17 @@ namespace CSharpCommands
 
         // Operator Overloading must be public static method.
 
-        public static Complex operator + (Complex left, Complex right)
+        public static Complex operator +(Complex left, Complex right)
         {
             return new Complex
             {
                 // to make this code safe we have to use nullable
-                Real = (left?.Real??0) + (right?.Real??0),
-                Imag = (left?.Imag??0) + (right?.Imag??0)
+                Real = (left?.Real ?? 0) + (right?.Real ?? 0),
+                Imag = (left?.Imag ?? 0) + (right?.Imag ?? 0)
             };
         }
 
-        public static Complex operator + (Complex left, int right)
+        public static Complex operator +(Complex left, int right)
         {
             return new Complex
             {
@@ -2774,7 +2873,7 @@ namespace CSharpCommands
             };
         }
 
-        public static Complex operator + (int right, Complex left )
+        public static Complex operator +(int right, Complex left)
         {
             return new Complex
             {
@@ -2782,7 +2881,7 @@ namespace CSharpCommands
                 Imag = left.Imag
             };
         }
-        public static Complex operator - (Complex left, Complex right)
+        public static Complex operator -(Complex left, Complex right)
         {
             return new Complex
             {
@@ -2791,17 +2890,17 @@ namespace CSharpCommands
             };
         }
 
-        public static Complex operator - (Complex c)
+        public static Complex operator -(Complex c)
         {
             return new Complex
             {
-                Real = - c.Real,
-                Imag = - c.Imag
+                Real = -c.Real,
+                Imag = -c.Imag
             };
         }
 
         // Used for Both pre fix and postfix version (++c, c++)
-        public static Complex operator ++ (Complex c)
+        public static Complex operator ++(Complex c)
         {
             return new Complex
             {
@@ -2811,7 +2910,7 @@ namespace CSharpCommands
         }
 
         // Used for Both pre fix and postfix version (--c, c--)
-        public static Complex operator -- (Complex c)
+        public static Complex operator --(Complex c)
         {
             return new Complex
             {
@@ -2821,14 +2920,14 @@ namespace CSharpCommands
         }
 
         // if you overload any type of comaprasoin operator then you have to overload the opesite one.
-        public static bool operator > (Complex left, Complex right)
+        public static bool operator >(Complex left, Complex right)
         {
-            if (left.Real == right.Real) 
+            if (left.Real == right.Real)
                 return left.Imag > right.Imag;
             return left.Real > right.Real;
         }
 
-        public static bool operator < (Complex left, Complex right)
+        public static bool operator <(Complex left, Complex right)
         {
             if (left.Real == right.Real)
                 return left.Imag < right.Imag;
@@ -2843,7 +2942,7 @@ namespace CSharpCommands
         // Implicit casting: when we overload implicit cast there will be no return type to the method.
         public static implicit operator int(Complex c)
         {
-            return c?.Real??0;
+            return c?.Real ?? 0;
         }
 
         // Explicit casting: when we overload Explicit cast there will be no return type to the method.
@@ -2854,7 +2953,7 @@ namespace CSharpCommands
 
         public static explicit operator string(Complex c)
         {
-            return c?.ToString()?? "null";
+            return c?.ToString() ?? "null";
         }
     }
 
@@ -2905,13 +3004,13 @@ namespace CSharpCommands
             if (Object.ReferenceEquals(this, obj)) return true; // this will increase preformance.
 
             if (obj == null) // this used to handle null values.
-                return false; 
+                return false;
             if (obj is Point)//  is return false if the casting fail, no execpion will be returned. 
             {
                 Point p = (Point)obj;
                 return this.x == p.x && this.y == p.y ? true : false;
             }
-            else 
+            else
                 return false;
 
             /// As and Is used with refernce data type so we can't use them with struct as it is value type.
@@ -2923,6 +3022,335 @@ namespace CSharpCommands
              *    return this.x == p.x && this.y == p.y ? true : false;
              *    
              */
+        }
+    }
+
+    class TypeA
+    {
+        public int A { set; get; }
+        public TypeA(int a) { A = a; }
+
+        public void staticllyBindedShow()
+        {
+            Console.WriteLine("I am the base.");
+        }
+
+        // The virtual mehod must be non private it could be any other access modifer.
+        public virtual void DynamicllyBindedShow()
+        {
+            Console.WriteLine("I am base");
+        }
+    }
+    class TypeB : TypeA
+    {
+        public int B { set; get; }
+        public TypeB(int a, int b) : base(a)
+        {
+            B = b;
+        }
+        public new void staticllyBindedShow() // Using new here is optional not mandatory.
+        {
+            Console.WriteLine("I am the child.");
+        }
+
+        // To override virtual method i have to use override keyword to override method.
+        public override void DynamicllyBindedShow()
+        {
+            Console.WriteLine("I am child.");
+        }
+    }
+    class TypeC : TypeB
+    {
+        public int C { set; get; }
+        public TypeC(int a, int b, int c) : base(a, b)
+        {
+            C = c;
+        }
+        public override void DynamicllyBindedShow()
+        {
+            Console.WriteLine(" I am drived2 (typeC).");
+        }
+    }
+    class TypeD : TypeC
+    {
+        public int D { get; set; }
+        public TypeD(int a, int b, int c, int d) : base(a, b, c)
+        {
+            D = d;
+        }
+
+        // using new here mean new implementation to this method this mean when we didn't use override keyword 
+        //   and using new keyword so the last virsion of this virtual method is the one in the last child class 
+        //   used keyword override. but this method with new keyword can be access only with a refernce of typeD 
+        //   not any other refernces.
+        public new virtual void DynamicllyBindedShow()
+        {
+            Console.WriteLine(" I am drived3 (typeD).");
+        }
+    }
+    class TypeE : TypeD
+    {
+        public int E { get; set; }
+        public TypeE(int a, int b, int c, int d, int e) : base(a, b, c, d)
+        {
+            E = e;
+        }
+
+        // override on typeD Implementation.
+        public override void DynamicllyBindedShow()
+        {
+            Console.WriteLine(" I am drived3 (typeD).");
+        }
+    }
+
+    /// <Abstract_class>
+    /// 
+    ///  we could create an abstract class without having any abstract method.
+    ///  The resone of doning that is we don't need to create an object of this class but we need only to inhert it w
+    ///    without creatting new objects.
+    ///    
+    /// You cannot create instances of an abstract class directly. You can only create instances of concrete classes
+    ///   derived from the abstract class.
+    ///   
+    /// Abstract classes are used when you want to define a common interface, structure, or behavior for a group of 
+    ///   related classes while leaving certain details to be implemented by concrete classes. They promote code 
+    ///   reusability and enforce a consistent structure across derived classes.
+    ///   
+    /// Abstract classes are a fundamental feature of object-oriented programming and are commonly used in C# to create
+    /// class hierarchies that share common characteristics but require specific implementations in derived classes.
+    ///   
+    /// </Abstract_class>
+    abstract class person
+    {
+        public string FName { get; set; }
+        public string LName { get; set; }
+        public person(string _FName, string _LName)
+        {
+            FName = _FName;
+            LName = _LName;
+        }
+        public override string ToString()
+        {
+            return $"{FName} {LName}";
+        }
+    }
+
+    abstract class GeoShape
+    {
+        public int Dim1 { get; set; }
+        public int Dim2 { get; set; }
+        public GeoShape(int dim1, int dim2) { Dim1 = dim1; Dim2 = dim2; }
+
+        // abstract method must be in abstract class.
+        public abstract double Area();// Abstract method = Virtual + no Implementation.
+        public abstract double Perimater { get; }; // abstract property.
+    }
+
+    // As the Reg class is not abstract and it's inherte the abstract class has abstract method so it have to implement
+    //   all the abstract methods in this abstract class.
+    class Reg : GeoShape
+    {
+        public Reg(int W, int H) : base(W, H)
+        {
+
+        }
+
+        public override double Perimater { get { return (Dim1 + Dim2) * 2; } }
+        // As the area is abstract then we have to implement it using keyword override.
+        public override double Area()
+        {
+            return Dim1 * Dim2;
+        }
+    }
+
+    ///<Sealed>
+    ///
+    /// In C#, the sealed keyword is used to prevent further inheritance or overriding of a class, method, or property.
+    /// When you mark a class as sealed, it means that other classes cannot inherit from it. When you mark a method or
+    ///   property as sealed, it means that derived classes cannot override or hide that specific method or property.
+    ///Here are the common use cases for sealed:
+    ///
+    ///</Sealed>
+    class BaseClass
+    {
+        public int Fild1 { get; set; }
+        public virtual int output()
+        {
+            return Fild1;
+        }
+
+        public virtual void print()
+        {
+            Console.WriteLine("Sealed method can't be override.");
+        }
+
+    }
+    /// <Sealed_Class>
+    /// 
+    /// When you mark a class as sealed, it indicates that you do not want other classes to inherit from it.
+    /// This is useful when you want to prevent further extension of a class, often because it provides a complete 
+    ///   or final implementation.
+    ///   
+    /// </Sealed_Class>
+    sealed class FRefClass : BaseClass
+    {
+        public override int output()
+        {
+            return Fild1;
+        }
+    }
+    class SRefClass : BaseClass
+    {
+        /// <Sealed_Method>
+        /// 
+        /// When you mark a method as sealed in a base class, it prevents derived classes from overriding or hiding 
+        ///   that method. This is useful when you want to provide a specific implementation that should not be changed
+        ///   in derived classes.
+        ///   
+        /// </Sealed_Method>
+
+        /// Similar to sealed methods, you can mark a property as sealed to prevent derived classes from overriding or
+        ///  hiding it. This ensures that the property's behavior remains consistent.
+        public override sealed void print()
+        {
+            base.print();
+        }
+
+    }
+    class TRefClass : SRefClass
+    {
+
+        //public override void print(){base.print();}   error
+        // sealed method can't be override.
+    }
+    class Helper
+    {
+        ///<Generic>
+        ///
+        /// Generics in C# are a powerful feature that allow you to create classes, interfaces, methods, and delegates 
+        ///   that work with various data types without sacrificing type safety. Generics provide the ability to define
+        ///   placeholders for data types that are determined when the code is compiled. This enables you to write
+        ///   reusable and type-safe code
+        ///   
+        ///</Generic>
+
+        public static void swap(ref int x, ref int y)
+        {
+            int temp = x;
+            x = y;
+            y = temp;
+        }
+
+        ///<Generic_Method>
+        ///
+        /// You can define generic methods within non-generic classes. These methods use type parameters to work with a
+        ///  variety of data types.
+        ///
+        ///</Generic_Method>
+
+        public static void swap<T>(ref T x, ref T y)
+        {
+            T temp = x;
+            x = y;
+            y = temp;
+        }
+    }
+    class Helper2<T>
+        // We could add some constrains in type T to use it.
+        where T : 
+        //class
+        // primary constrains 
+        // zero or one.
+        // T must be class.
+        // After adding this constrans i could use null and == operator with Type T.
+        //struct 
+        // T must be struct
+        // After adding this struct i could use T x = new T(); so type T will have default parameterless constructor.
+
+        //Point
+        // General constrains when we use a constrains of name of class or struct.
+        // T must be Point or point child.
+        IComparable<T>
+        // Secodary constrains
+        // Implementing interfaces
+        // After adding this constrains i could use the function compareTo in the Icomparable interface with T.
+        // T must be classed or struct that implement Icomparable interface.
+
+        //new()
+        // This constrains make T must be data Type having parameterless constructor.
+        // can't use new() constrains with struct as it all new by default in struct.
+
+    {
+        /// <Generic_class>
+        /// 
+        /// You can create generic classes by defining type parameters within angle brackets (<>). 
+        /// These type parameters serve as placeholders for the actual data types that will be used when creating 
+        ///   instances of the class.
+        /// 
+        /// </Generic_class>
+
+        // To know why we can't use generic all the time in all classes and methods let's see the following examples:
+        // The first problem that will face you is the function that accept parametr of type T when we use this function 
+        //  we may pass any type of data to it like int or double or even refernce type like class or string at this time
+        //  we will find that not all the operation could be execute in both value type parameter and refernce type
+        //  paramerter
+        // There are some operation that can be happen with any data type in .net. let's see them.
+        public Helper2()
+        {
+            // valid for any type parameter T in .net
+            // 1. Declare variable or object.
+            T X;
+            T Y;
+
+            // 2. Initialization by default.
+            X = default;
+
+            // 3. Assignment operator
+            Y = X;
+
+            // 4. return statment. 
+            // T myFun() { return X = default;}
+
+            // 5. dealing with System.Object
+            object o1 = X;
+            if (X.Equals(Y)) ;
+            int R = X?.GetHashCode() ?? 0;
+            string st = X.ToString();
+            if (X?.GetType() == Y?.GetType()) ;
+            
+
+
+
+            // Not valid for any type parameter T.
+            // X = 0;   As not all data type in .net could be initalized to zero. it just work with value type.
+            // Y = null;   As not all data type in .net could be initalized to null. it just work with refernce type.
+            // X = new T(); As not all constructor have parameterless constructor.
+
+        }
+        // this funcion can't be used as generic as there is no way to use arithmatic operator with type T.
+        //public static T sum(T x, T y) { return x + y; }
+        public static void BSort(T[] arr)
+        {
+            for (int i = 0; i < arr?.Length; i++)
+                for (int j = 0; j < arr?.Length - i - 1; j++)
+                    // if (arr[j + 1] < arr[j]) // can't be used as it is not valid for all data type.
+                    if (arr[j + 1].CompareTo(arr[j]) < 0)
+                        swap(ref arr[j], ref arr[j + 1]);
+                
+        }
+        public int SearchArray(T[] arr, T value)
+        {
+            foreach (T i in arr)
+                //if (i  == value) // can't be used as it is not valid to all data type.
+                if (i .Equals( value))
+                    return Array.IndexOf(arr, i); 
+            return -1;
+        }
+        public static void swap(ref T x, ref T y)
+        {
+            T temp = x;
+            x = y;
+            y = temp;
         }
     }
 }
