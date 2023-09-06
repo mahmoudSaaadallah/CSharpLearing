@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -20,6 +21,7 @@ using System.IO;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Reflection.Metadata;
@@ -29,10 +31,12 @@ using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Security.AccessControl;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 /* In C sharp we could use a static using to import any class as a static so we could use all the methods
     in this class without writing all the pass of the mehtod like when we use a System.Console class
@@ -1891,11 +1895,695 @@ namespace CSharpCommands
             Console.WriteLine($"str3 {str3}"); // four.
             Console.WriteLine($"str4 {str4}"); // three.
 
+            //----------------------------------------------------------------------------------------------------------//
+            ///<Collection>
+            ///
+            /// </Collection>
 
+            ///<List<T>>
+            ///
+            /// In C#, List<T> is one of the most commonly used collection classes provided by the .NET Framework. 
+            /// It is part of the System.Collections.Generic namespace and allows you to create dynamic, resizable lists
+            ///   that can hold elements of a specific data type (T).
+            ///   
+            /// Here are the key features and usage details of List<T>:
+            /// 
+            /// 1. Creating a List:
+            /// You can create a new instance of List<T> by specifying the type of elements it will hold:
+            /// List<int> numbers = new List<int>(); // Creates an empty list of integers
+            /// 
+            /// 2. Adding Elements:
+            /// You can add elements to a list using the Add method:
+            /// numbers.Add(42);
+            /// numbers.Add(10);
+            /// 
+            /// 3. Accessing Elements:
+            /// You can access elements in a list by their index using square brackets ([]):
+            /// int firstNumber = numbers[0]; // Retrieves the first element (42)
+            /// 
+            /// 4. Count and Capacity:
+            /// Count: Returns the number of elements in the list.
+            /// Capacity: Returns the number of elements that the list can currently hold without resizing.
+            /// int count = numbers.Count;
+            /// int capacity = numbers.Capacity;
+            /// 
+            /// 5. Removing Elements:
+            /// You can remove elements by value using the Remove method or by index using the RemoveAt method:
+            /// numbers.Remove(10); // Removes the first occurrence of 10
+            /// numbers.RemoveAt(0); // Removes the element at index 0
+            /// 
+            /// 6. Iterating Over a List:
+            /// You can iterate over the elements of a list using various techniques, such as foreach loops or LINQ querie
+            /// foreach (int number in numbers)
+            /// {
+            ///    // Process each number
+            /// }
+            /// // Using LINQ to filter or transform elements
+            /// var filteredNumbers = numbers.Where(n => n > 20);
+            /// 
+            /// 7. Sorting:
+            /// You can sort a list using the Sort method:
+            /// numbers.Sort(); // Sorts the list in ascending order
+            /// 
+            /// 8. Other Useful Methods:
+            /// Clear(): Removes all elements from the list.
+            /// Contains(T item): Checks if the list contains a specific item.
+            /// IndexOf(T item): Returns the index of the first occurrence of an item.
+            /// ToArray(): Converts the list to an array.
+            /// AddRange(IEnumerable < T > collection): Adds elements from another collection.
+            /// TirmExcess(): to tirm or delete un used location in list.
+            /// 
+            /// 9. Generics:
+            /// List<T> is strongly typed, which means it provides type safety. You specify the type of elements the list
+            ///   will hold when creating it (<T>).
+            ///   
+            /// 10. Dynamic Sizing:
+            /// List<T> dynamically resizes itself as needed to accommodate more elements, so you don't need to specify an
+            ///   initial capacity.
+            ///   
+            /// List<T> is a versatile and efficient collection class that is widely used in C# for storing and managing
+            ///   lists of items.
+            /// It's suitable for a wide range of scenarios, from simple data storage to more complex data manipulation 
+            ///   and filtering operations.
+            /*
+             * The `List<T>` class in C# provides various methods to manipulate and work with lists. Here are some of the most commonly used methods of the `List<T>` class:
+
+            **1. Add**: Adds an element to the end of the list.
+
+            ```csharp
+            List<int> numbers = new List<int>();
+            numbers.Add(42);
+            numbers.Add(10);
+            ```
+
+            **2. AddRange**: Adds a collection of elements to the end of the list.
+
+            ```csharp
+            List<int> numbers = new List<int>();
+            List<int> moreNumbers = new List<int> { 1, 2, 3 };
+            numbers.AddRange(moreNumbers);
+            ```
+
+            **3. Remove**: Removes the first occurrence of a specific element from the list.
+
+            ```csharp
+            List<int> numbers = new List<int> { 42, 10, 42 };
+            numbers.Remove(42); // Removes the first occurrence of 42
+            ```
+
+            **4. RemoveAt**: Removes the element at a specific index.
+
+            ```csharp
+            List<int> numbers = new List<int> { 42, 10, 5 };
+            numbers.RemoveAt(1); // Removes the element at index 1 (10)
+            ```
+
+            **5. RemoveAll**: Removes all elements that match a specified condition.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+            numbers.RemoveAll(n => n % 2 == 0); // Removes even numbers
+            ```
+
+            **6. Clear**: Removes all elements from the list.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3 };
+            numbers.Clear(); // Removes all elements
+            ```
+
+            **7. Contains**: Checks if the list contains a specific element.
+
+            ```csharp
+            List<string> names = new List<string> { "Alice", "Bob", "Charlie" };
+            bool containsBob = names.Contains("Bob"); // true
+            ```
+
+            **8. IndexOf**: Returns the index of the first occurrence of a specific element.
+
+            ```csharp
+            List<string> names = new List<string> { "Alice", "Bob", "Charlie" };
+            int indexOfBob = names.IndexOf("Bob"); // 1
+            ```
+
+            **9. Sort**: Sorts the elements in the list.
+
+            ```csharp
+            List<int> numbers = new List<int> { 42, 10, 5 };
+            numbers.Sort(); // Sorts the list in ascending order
+            ```
+
+            **10. Reverse**: Reverses the order of the elements in the list.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+            numbers.Reverse(); // Reverses the list
+            ```
+
+            These are just a few of the many methods provided by the `List<T>` class. `List<T>` is a versatile collection class that makes it easy to work with lists of elements in C# and is widely used in a variety of scenarios.
+
+
+            Certainly! Here are more commonly used methods of the `List<T>` class in C#:
+
+            **11. Find**: Returns the first element that matches a specified condition.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+            int result = numbers.Find(x => x > 3); // Returns the first element > 3 (4)
+            ```
+
+            **12. FindAll**: Returns all elements that match a specified condition.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+            List<int> results = numbers.FindAll(x => x % 2 == 0); // Returns all even numbers [2, 4]
+            ```
+
+            **13. TrueForAll**: Checks if all elements in the list satisfy a specified condition.
+
+            ```csharp
+            List<int> numbers = new List<int> { 2, 4, 6, 8, 10 };
+            bool allEven = numbers.TrueForAll(x => x % 2 == 0); // true
+            ```
+
+            **14. ConvertAll**: Converts all elements in the list to a different data type using a specified converter function.
+
+            ```csharp
+            List<string> strings = new List<string> { "1", "2", "3" };
+            List<int> integers = strings.ConvertAll(int.Parse); // Converts to List<int> [1, 2, 3]
+            ```
+
+            **15. FindIndex**: Returns the index of the first element that matches a specified condition.
+
+            ```csharp
+            List<string> names = new List<string> { "Alice", "Bob", "Charlie" };
+            int index = names.FindIndex(name => name.StartsWith("B")); // Returns index of "Bob" (1)
+            ```
+
+            **16. Insert**: Inserts an element at a specified index.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3 };
+            numbers.Insert(1, 42); // Inserts 42 at index 1 [1, 42, 2, 3]
+            ```
+
+            **17. InsertRange**: Inserts a collection of elements at a specified index.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3 };
+            List<int> additionalNumbers = new List<int> { 4, 5 };
+            numbers.InsertRange(1, additionalNumbers); // Inserts [4, 5] at index 1 [1, 4, 5, 2, 3]
+            ```
+
+            **18. GetRange**: Returns a new list containing elements from a specified range of indices.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+            List<int> subrange = numbers.GetRange(1, 3); // Returns [2, 3, 4]
+            ```
+
+            **19. RemoveRange**: Removes a specified number of elements starting from a specified index.
+
+            ```csharp
+            List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+            numbers.RemoveRange(1, 3); // Removes elements at index 1, 2, and 3 [1, 5]
+            ```
+
+            These additional methods provide even more flexibility when working with lists in C#. The `List<T>` class offers a wide range of methods to help you manipulate and manage your lists efficiently.
+             */
+            ///   
+            ///<List<T>>
+
+            // When we declar a list without specifie the capacity of it, the compilor will creat an array with capacity
+            //  equal to 4, then after adding element to this list till it complite and add more than the capacity the 
+            //  compilor will create new list with the capicity equal to double old one capacity and copy the old the old 
+            //  list to the new one.
+
+            List<int> ilst = new List<int>();
+            // To get size of list we use function count().
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 0  capacity: 0
+
+            ilst.Add(1);
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 1  capacity: 4
+            //ilst.Add("2"); //compiler enforce type safty at compilation Type.
+            ilst.Add(2);
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 2  capacity: 4
+            ilst.Add(3);
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 3  capacity: 4
+            Console.WriteLine(sumList(ilst)); // 6
+
+            // we can't use indexer(squer brackets[]) to add to list 
+            // ilst[5] = 10; // ArgumentOutOfRangeExecption
+            // indexer for update and get not for add;
+
+            ilst.Add(4);
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 4  capacity: 4
+            ilst.Add(5);
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 5  capacity: 8
+
+            // We could add more than one parameter at a time using addRang() function which accept array of parameter.
+            ilst.AddRange(new int[] { 6, 7, 8, 9 }); 
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 9  capacity: 16
+
+            // To delete the unused location in list we could use TirmExcess() function.
+            ilst.TrimExcess();
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 9  capacity: 9
+
+            ilst.Add(10);
+            Console.WriteLine($"size: {ilst.Count}  capacity: {ilst.Capacity}");//  size: 10  capacity: 18
+
+
+
+            ///<Dictionary>
+            /// In C#, a Dictionary<TKey, TValue> is a collection class that represents a collection of key-value pairs, 
+            ///   where each key is associated with a value. It is part of the System.Collections.Generic namespace.
+            /// Here are the key features and usage details of Dictionary<TKey, TValue>:
+            ///   
+            /// 1. Creating a Dictionary:
+            /// You can create a new instance of Dictionary<TKey, TValue> by specifying the types for keys (TKey) and 
+            ///   values (TValue):
+            ///   Dictionary<string, int> ageMap = new Dictionary<string, int>();
+            ///   
+            /// 2. Adding Key-Value Pairs:
+            /// You can add key-value pairs to the dictionary using the Add method or by directly indexing into the
+            ///   dictionary:
+            /// ageMap.Add("Alice", 30);
+            /// ageMap["Bob"] = 25;
+            ///
+            /// 3. Accessing Values by Key:
+            /// You can access values in the dictionary using the associated keys:
+            /// int aliceAge = ageMap["Alice"]; // Retrieves the value associated with "Alice" (30)
+            /// 
+            /// 4. Checking for Key Existence:
+            /// You can check if a key exists in the dictionary using the ContainsKey method:
+            /// bool containsBob = ageMap.ContainsKey("Bob"); // true
+            /// 
+            /// 5. Removing Key-Value Pairs:
+            /// You can remove key-value pairs using the Remove method:
+            /// ageMap.Remove("Alice"); // Removes the key-value pair with the key "Alice"
+            /// 
+            /// 6. Iterating Over a Dictionary:
+            /// You can iterate over the key-value pairs in the dictionary using a foreach loop:
+            /// foreach (var pair in ageMap)
+            /// {
+            ///     string name = pair.Key;
+            ///     int age = pair.Value;// Process the key-value pair
+            /// }
+            /// 
+            /// 7. Count:
+            /// The Count property returns the number of key-value pairs in the dictionary:
+            /// int count = ageMap.Count;
+            /// 
+            /// 8. TryGetValue:
+            /// You can safely retrieve a value by key using the TryGetValue method, which avoids exceptions if the key
+            ///   is not found:
+            /// if (ageMap.TryGetValue("Charlie", out int charlieAge))
+            /// {
+            ///      // Key "Charlie" exists, and charlieAge contains the value
+            /// }
+            ///  else
+            ///  {
+            ///       // Key "Charlie" does not exist
+            ///  }
+            ///  
+            /// 9. Dictionary Initialization:
+            /// You can initialize a dictionary using collection initializer syntax:
+            /// Dictionary<string, int> scores = new Dictionary<string, int>
+            /// {
+            ///    { "Alice", 95 },
+            ///    { "Bob", 88 },
+            ///    { "Charlie", 75 }
+            /// };
+            /// 
+            /// 10. Value Collection and Key Collection:
+            /// You can access the collection of values or keys using the Values and Keys properties, respectively:
+            /// ICollection<int> allAges = ageMap.Values;
+            /// ICollection<string> allNames = ageMap.Keys;
+            /// 
+            /// 11. Duplicate Keys:
+            /// Keys in a dictionary must be unique. If you attempt to add a duplicate key, it will throw an exception
+            ///  
+            /// 12. Generics:
+            /// Dictionary<TKey, TValue> is strongly typed, allowing you to specify the types for keys and values 
+            ///   when creating it.
+            ///   
+            /// Dictionaries are widely used to store and retrieve data efficiently based on keys.
+            /// They are suitable for scenarios where you need fast lookups and associations between keys and values.
+            /// 
+            ///</Dictionary>
+
+            Dictionary<string, long> phoneBook = new Dictionary<string, long>();
+            // key must be unique.
+            phoneBook.Add("abc", 123);
+            phoneBook.Add("def", 456);
+            phoneBook.Add("xyz", 789);
+            //phoneBook.Add("xyz", 159); Execption key must be unique.
+            // To handle this execption we could use Try.
+            if (phoneBook.TryGetValue("def", out long number))
+            {
+                // Key "def" exists, and charlieAge contains the value
+                phoneBook["def"] = 147;// update.
+            }
+            else
+            {
+                // Key "Charlie" does not exist
+                phoneBook.Add("def", 159); // adding.
+            }
+
+            if (!phoneBook.ContainsKey("xyz"))
+                phoneBook.Add("xyz", 159);
+            else
+                phoneBook["xyz"] = 159;// update
+
+            // To update data for any key we could use indexer.
+            phoneBook["abc"] = 541;// used to update value to specific key.
+            // Also we could use indexer for adding
+            phoneBook["nwc"] = 565; // indexer for adding.
+            // also we could use indexer for retrive data.
+            Console.WriteLine(phoneBook["def"]);// 456   // used to get.
+            // if we try to retrive non exist value then it will return an execption.
+            //Console.WriteLine(phoneBook["djk"]); // it will throw an execption.
+            // To handle this execption we could use contain.
+            if (phoneBook.ContainsKey("djk"))
+                Console.WriteLine(phoneBook["djk"]);
+            else
+                Console.WriteLine("not found");
+
+            // To loop inside the dictionary we could use foreach loop to loop with keyValuePare.
+            foreach (KeyValuePair<string, long> item in phoneBook)
+                Console.WriteLine($"{item.Key} : {item.Value}");
+            // or we could use it by the next foreach 
+            foreach (var item in phoneBook)
+                Console.WriteLine($"{item.Key} {item.Value}");
+
+            // To return the number of paries in dictionary
+            Console.WriteLine(phoneBook.Count);//4
+
+            // You can initialize a dictionary using collection initializer syntax:
+            Dictionary<string, int> scores = new Dictionary<string, int>
+            {
+                { "Alice", 95 },
+                { "Bob", 88 },
+                { "Charlie", 75 }
+            };
+
+
+            //----------------------------------------------------------------------------------------------//
+            ///<Mehod_Pointer>
+            ///</Mehod_Pointer>
+
+            // step 1. Delegate declaration.
+            strFunDelegate fptr;
+
+            // step 2. Pointer To Function(Delegate) Initalization.
+            fptr = new strFunDelegate(StringFunctions.getLength);
+            // // we could also use it in a simple way of initalization like
+            fptr = StringFunctions.getLength;// here without using new strFunDelegate.
+            // here our delegate refare to static method.
+
+            // step 3. using Pointer to function, call function.
+            // to call the function we use invoke function which is part of delegate class.
+            int numberOfChar  = fptr.Invoke("Mahmoud");
+            Console.WriteLine(numberOfChar);// 7
+
+            fptr = new strFunDelegate(StringFunctions.getUpCah);
+            int numberOfUpperChar = fptr("AvseCdG");
+            Console.WriteLine(numberOfUpperChar); // 3
+
+            //fptr = new strFunDelegate(StringFunctions.fullNameLength); // Error.
+            //Error CS0123  No overload for 'fullNameLength' matches delegate 'strFunDelegate'
+            // this will return an error as the delegate signature not the same as the function
+            //   fulNameLength signature.
+
+            // To refare to non static function we have to create an object of the class that contain 
+            //  non static function, then use this object to get the function.
+            StringFunctions obj =  new StringFunctions();
+            obj.ch = 'h';
+            fptr = obj.getChNum;
+            int numberofRepatedChar = fptr.Invoke("hand hello");
+            Console.WriteLine(numberofRepatedChar);  // 2
+
+
+            // This is the first way to use Bsort function to sort an array form the smallest to the greatest.
+            // in this way we can't control the way of sorting as the sorting will be always form smaller to greater.
+            // but when we deal with delegate we will have the ablity to use different ways.
+            int[] array02 = { 2, 6, 5, 7, 1, 9, 12, -1, -9, 11 };
+            SortingAlgorathm.Bsort(array02);
+            foreach (int i in array02)
+                Console.WriteLine(i);// -9  -1  1  2  5  6  7  9  11  12
+
+
+            // here when we use delegate we could control the way of using sorting as the ComLes, and the 
+            //  ComGer in the CompFunction class have the same signature.
+            CompFunDelegate Cptr = new CompFunDelegate(CompFunction.ComLes);      
+            SortingAlgorathm.Bsort(array02, Cptr); // here sortting will be from greater to smaller.
+            foreach (int i in array02)
+                Console.WriteLine(i); // 12  11  9  7  6  5  2  1  -1  -9
+            Cptr = CompFunction.ComGer;
+            SortingAlgorathm.Bsort(array02, Cptr);// here sortting will be from smaller to greater.
+            foreach (int i in array02)
+                Console.WriteLine(i);// -9  -1  1  2  5  6  7  9  11  12
+
+            //---------------------------------------------------------------------------------------------//
+            ///<Delegate_With_Generic>
+            ///
+            /// We could use delegate with generic to make a delegate that could refere any method that accept 
+            ///   any specific number of parameter no matter what is the data type.
+            ///   
+            /// So here we used a strFunDelegate which accept one parameter of type T and return bool, as the 
+            ///    accepted parameter is not a specific type then we could use this delegate to refere to any 
+            ///    method that accept any type of one parameter and return bool. 
+            /// in our example we use this deleget to refer to checklength method which accept string and 
+            ///    return bool, and we also we use the same delegate to refere to anther method COdd which 
+            ///    accept int and retrun bool. so this mean we could use this delegate with any method that 
+            ///    accept one parameter of any type and return bool.
+            ///  
+            /// </Delegate_With_Generic>
+
+            List<string> stringList = new List<string>() { "Ahmed", "Omer", "Mahmoud", "mai", "ali" };
+            strFunDelegate<string> sptr = CondFuctions.checklength;
+            List<string> str = usingCondition.findCondition(stringList, sptr);
+            foreach(string s in str)
+                Console.WriteLine(s);
+
+
+            strFunDelegate<int> sptr2 = CondFuctions.COdd;
+            List<int> intlst = new List<int>() { 1, 4, 5, 6, 14, 16, 18, 13, 17, 19, 20, 23, 30, 3, };
+            intlst = usingCondition.findCondition(intlst, sptr2);
+            foreach (int s in intlst)
+                Console.WriteLine(s);
+
+            // Here we use Generic Delegate that refere any mehod accpet one parameter with any data type and return output
+            //    with the same data type as accepted parameter.
+            // in our example getAbs funcion accept int and return int so we could use this generic delegate with it.
+            strFunDelegate2<int> sptr3 = CondFuctions.getAbs;
+            Console.WriteLine(sptr3.Invoke(-400));// 400
+            // Actally we don't need to call Invoke method each time we need to invoke the delegate we could 
+            //   use it without any methods
+            Console.WriteLine(sptr3(-400));// 400
+
+
+            /// <Built_In_Delegate>
+            /// 
+            /// There are some built in delegate that we could use instead of make our own delegate:
+            /// In C#, there are several built-in delegate types provided by the .NET Framework, which are part of the
+            ///   System and System.
+            /// Delegate namespaces. These delegate types simplify common scenarios for delegate usage. 
+            /// Here are some of the most commonly used built-in delegate types:
+            /// 
+            /// 1.Action:
+            ///   Represents a delegate that has no return value (void).
+            ///   Used for methods that perform an action but don't return a value.
+            ///   Can accept up to 16 parameters (overloads available).
+            ///   example:
+            ///   Action<string> printMessage = (message) => Console.WriteLine(message);
+            ///   printMessage("Hello, World!");
+            /// 
+            /// 2.Func:
+            ///   Represents a delegate that takes parameters and returns a value.
+            ///   Used for methods that return a value.
+            ///   Can accept up to 16 parameters (overloads available).
+            ///   example:
+            ///   Func<int, int, int> add = (x, y) => x + y;
+            ///   int result = add(3, 4); // 7
+            ///   
+            /// 3.Predicate:
+            ///   Represents a delegate that defines a method that takes one parameter and returns a boolean value.
+            ///   Commonly used for filtering collections.
+            ///   example:
+            ///   Predicate<int> isEven = (x) => x % 2 == 0;
+            ///   bool even = isEven(6); // true
+            ///   
+            /// 
+            /// 4.Comparison:
+            ///   Represents a delegate that compares two objects of the same type.
+            ///   Useful for custom sorting or ordering of objects.
+            ///   example:
+            ///   Comparison<string> stringComparison = (x, y) => x.CompareTo(y);
+            ///   int result = stringComparison("apple", "banana"); // < 0
+            ///   
+            /// 5.Converter:
+            ///   Represents a delegate that converts one type to another.
+            ///   Often used when converting elements in collections.
+            ///   example:
+            ///   Converter<int, string> intToString = (x) => x.ToString();
+            ///   string text = intToString(42); // "42"
+            ///      
+            /// </Built_In_Delegate>
+            Predicate<int> sptr4 = CondFuctions.COdd;
+            intlst = usingCondition2.findCondition(intlst, sptr4);
+            foreach (int s in intlst)
+                Console.WriteLine(s);
+
+
+            // Action Delegate:
+            // this delegate dosen't return any thing it returns void.
+            Action<string> Asptr0 = new Action<String>(CondFuctions.print);
+            Asptr0("My name is mahmoud"); // my name is mahmoud.
+            //---------------------------------------------------------------------------------------------//
+            /// <Anonymous_Method>
+            /// 
+            /// An anonymous method in C# is a method without a name, defined inline within the code. 
+            /// It allows you to define a method's implementation right where it's needed, typically as an 
+            ///   argument to a delegate or as a lambda expression. 
+            /// Anonymous methods are a way to create delegate instances with less formal method declarations.
+            /// Here are more details and examples of anonymous methods in C#:
+            /// Syntax:
+            /// Anonymous methods are defined using the delegate keyword followed by a parameter list and a
+            /// code block:delegate (parameters) { /* method body */ }
+            /// 
+            /// Implicit casting from function body to pointer  to function.
+            /// The idea of using Anonymous function is that we most of our funcions we used with delegate 
+            ///   in the previous examples were too short function, and we use them just for one time, so we 
+            ///   don't need to make these functions in different class as we could implement them using 
+            ///   delegate as an anonymous funcions
+            /// </Anonymous_Method>
+
+
+            // As we see here in this command we use the predicate delegate to point to function that accept
+            //   integer parameter and check if this parameter is devideable by 2.
+            // As we see we don't need to declare this funcion as public static to use it as we implement it
+            //   in main method also we don't need to make the return type as bool as the predicate delegate
+            //   known as a bool return delegate.
+            // we just need to write delegate to make cast and write input parameters then write the body of 
+            //   of our method.
+            Predicate<int> sptr5 = delegate (int x) { return x % 2 == 0; }; // this is function on the fly.
+            Console.WriteLine(sptr5(6));//true
+            intlst = usingCondition2.findCondition(intlst, sptr5);
+            foreach (int s in intlst)
+                Console.Write(s); // 4, 6, 14, 16, 18, 20, 30,
+
+            // At runtime the compiler genrate a new class and genrate new method in that class and put the 
+            //  same body of delegate to this function then make our delegate refere to this function.
+            // If we create any other function on the fly it will be in the same class. so the compiler make
+            // new class that save all functions on the fly.
+            
+
+            // To use Func delegate to declare Anonymous function we have to specify number and type of inputs
+            //  and type of output, as in our example here func accept two integer parmeter and return integer.
+            Func<int, int, int> sptr6 = delegate(int x,int y) { return x > y ? x : y; };
+            Console.WriteLine(sptr6(10, 12)); // 12
+
+            Action<string> Asptr1 =  delegate (string s) { Console.WriteLine(s); };
+            Asptr1("mahmoud"); // mahmoud
+
+
+            //-----------------------------------------------------------------------------------------------//
+            ///<Lambda_Exepression>
+            ///
+            /// Lambda expressions are a concise way to represent anonymous methods in C#.
+            /// They provide a simplified syntax for defining small, inline functions. 
+            /// Lambda expressions are often used when you need to pass a delegate to a method, create a short 
+            ///   method implementation, or define inline transformations. 
+            /// Here are more details and examples of lambda expressions in C#:
+            /// Syntax:
+            /// (parameters) => expression-or-statement-block
+            /// parameters: The input parameters (if any) of the lambda expression.
+            /// =>: The lambda operator separates the parameters from the expression or statement block.
+            /// expression-or-statement-block: The code to be executed when the lambda is invoked.
+            ///  
+            /// Lambda expressions are commonly used in scenarios where you would typically use anonymous
+            /// methods or delegates. 
+            /// They provide a more concise and expressive way to define short methods.
+            /// example:
+            /// // Lambda expression that takes two integers and returns their sum
+            /// Func<int, int, int> add = (a, b) => a + b;
+            /// int result = add(3, 4); // 7
+            /// 
+            /// 
+            /// </Lambda_Exepression>
+
+            // =>: this operator called fat arrow. read as : Goes to.
+
+
+            Predicate<int> sptr7 = (int x) => { return x % 2 == 0; };
+            Console.WriteLine(sptr7(9)); // false
+            // As we see here when we using lambda expression we don't need to use delegate keyword 
+            // We also could simplfy this line of code to make it more shorter by:
+            // We know that sptr7 accept int as we defend as Predicate<int>, and retur boo as it is Predicate
+            //   so we could delete the type of input parameter after = sign and also delate return keyword.
+            sptr7 = x => x % 2 == 0;
+            Console.WriteLine(sptr7(9)); // false
+                                         // this line of code do the same as:
+                                         // sptr7 = (int x) => { return x % 2 == 0; };
+
+            // So lambda expression allow as to make anonymous method using delegate with short code.
+            // If our funcion consist of multiple line, we have to use cuerl brackets and use return keyword.
+
+            // We have to know that we don't need to use delegate to use lambda expression we could use it with
+            //   any mehod even if it is not anonymous. and we could also use it with if, for and switch.
+
+
+            Action<int, int> Asptr2 =  (x, y) => { int s = x + y;  Console.WriteLine(s); };
+            Asptr2?.Invoke(4, 6);// 10
+
+
+            //---------------------------------------------------------------------------------------------//
+            ///<Events>
+            ///</Events>
+            
+            Ball ball = new Ball();
+            Player pl1 = new Player { Name = "Player11", Team = "team01" };
+            Player pl2 = new Player { Name = "Player12", Team = "team01" };
+            Player pl3 = new Player { Name = "Player21", Team = "team02" };
+            Player pl4 = new Player { Name = "Player12", Team = "team02" };
+            Refree R1 = new Refree() { Name = "Refree1" };
+
+            ball.BallLocation = new Location {X = 70, Y= 10, Z = 18};
+            Console.WriteLine(ball);
+
+            // We use here += to work in multTask.
+            // Event keyword in delegate decalration is resposable for crearting list with += sign, if we
+            //   delate  event then we could use this delegate direct with = sign, but in this state it will
+            //   not be a list of Adresses it will work with singl method a time(single Task). 
+            ball.BallLocationChanged += pl1.Run;
+            ball.BallLocationChanged += pl2.Run;
+            ball.BallLocationChanged += pl3.Run;
+            ball.BallLocationChanged += pl4.Run;
+            ball.BallLocationChanged += R1.Look;
+
+            ball.BallLocation = new Location { X = 12, Y = 77, Z = 11 };
+
+            // If we want to delate any player or refree from list of registraion we could use -=
+            // This mean delate Pointer that point to pl4 from list.
+            // after this line of code execute the pl4 will not notify when the locaion of ball change.
+            ball.BallLocationChanged -= pl4.Run;
 
 
         }// End of main
 
+
+
+
+
+        // funtion to add integer List
+        public static int sumList(List<int> list)
+        {
+            int sum = 0;
+            foreach (int i in list)
+                sum += i;
+            return sum;
+        }
 
 
         // In this method printLine which accept two parameters we put a default values for paramters that be accepted 
@@ -3143,7 +3831,7 @@ namespace CSharpCommands
 
         // abstract method must be in abstract class.
         public abstract double Area();// Abstract method = Virtual + no Implementation.
-        public abstract double Perimater { get; }; // abstract property.
+        public abstract double Perimater { get; } // abstract property.
     }
 
     // As the Reg class is not abstract and it's inherte the abstract class has abstract method so it have to implement
@@ -3352,5 +4040,241 @@ namespace CSharpCommands
             x = y;
             y = temp;
         }
+    }
+
+
+    /// <Pointer_To_Function>
+    /// 1. Delegate datatype declartion.
+    ///   delegate is declared in the namespace scope like class and struct.
+    ///   The signature of the deleget must be the same signature of the method which it poit to.
+    ///      like if the function return boolean then the delegate must return boolean and if it accepts two
+    ///      parameters then the delegate must accept two parameters.
+    /// </Pointer_To_Function>
+    public delegate bool CompFunDelegate(int L, int R);
+    // New delegate dataType(class), any object from this delegate DataType can point to(hold address) any 
+    //   function with the exact signature. bool(int, int)
+    // Can point to any function(static, object), regardless of function name, or access modifier.
+    class SortingAlgorathm
+    {
+        // Each time we use Bsort function we have to call CompFunction.ComGer 
+        public static void Bsort(int[] arr)
+        {
+            for(int i = 0; i < arr.Length; i++)
+                for(int j = 0; j < arr.Length- i - 1; j++)
+                    if (CompFunction.ComGer(arr[j], arr[j+1]))
+                        swap(ref arr[j], ref arr[j + 1]); 
+
+        }
+        public static void Bsort(int[] arr, CompFunDelegate CompFunPtr/*Pointer to ComFunction*/ )
+        {
+            for (int i = 0; i < arr.Length; i++)
+                for (int j = 0; j < arr.Length - i - 1; j++)
+                    if (CompFunPtr?.Invoke(arr[j], arr[j + 1]) == true)
+                        // Invoke call CompFunction using pointer.
+                        swap(ref arr[j], ref arr[j + 1]);
+
+        }
+        public static void swap(ref int x, ref int y)
+        {
+            int temp = x;
+            x = y; y = temp;
+        }
+    }
+    class CompFunction
+    {
+        public static bool ComGer(int x, int y) { return x > y ? true : false; }
+        public static bool ComLes(int x, int y) { return x < y ? true : false; }
+    }
+    //step 0. Delegate data type declarion.
+    public delegate int strFunDelegate(string str);
+    class StringFunctions
+    {
+        public char ch { get; set; }
+        public static int getLength(string str) { return str?.Length ?? -1; }
+        public int getChNum(string str)
+        {
+            int counter = 0;
+            for (int i = 0; i < str?.Length; i++)
+                if (str[i] == ch)
+                    counter++;
+            return counter;
+        }
+        public static int fullNameLength(string fName, string lName) { return fName.Length + lName.Length; }
+        public static int getUpCah(string str)
+        {
+            int counter = 0;
+            for (int i = 0; i < str?.Length; i++)
+                if (char.IsUpper(str[i]))
+                    counter++;
+            return counter;
+
+        }
+    }
+    //--------------------------------------------------------------------------------------//
+    //Delegate with Generic
+    public delegate bool strFunDelegate<T>(T x);
+    public delegate T strFunDelegate2<T>(T x);
+    class CondFuctions
+    {
+        public static bool ComGer(int x, int y) { return x > y ? true : false; }
+        public static bool ComLes(int x, int y) { return x < y ? true : false; }
+        public static bool checklength(string str) { return str.Length > 4; }
+        public static bool CEven(int ints) { return ints % 2 == 0; }
+        public static bool COdd(int ints) { return ints % 2 == 1; }
+        public static int getAbs(int n) { return Math.Abs(n); }
+        public static void print(string s) { Console.WriteLine(s); }
+
+
+    } 
+    class usingCondition
+    {
+        public static List<T> findCondition<T>(List<T> list, strFunDelegate<T> con)
+        {
+            List<T> newLst = new List<T>();
+            for (int i = 0; i < list?.Count; i++)
+                if (con?.Invoke(list[i]) == true)
+                    newLst.Add(list[i]);
+            return newLst;  
+            
+        }
+        
+    }
+
+    /// <Built_In_Delegate>
+    /// 
+    /// There are some built in delegate that we could use instead of make our own delegate:
+    /// In C#, there are several built-in delegate types provided by the .NET Framework, which are part of the
+    ///   System and System.
+    /// Delegate namespaces. These delegate types simplify common scenarios for delegate usage. 
+    /// Here are some of the most commonly used built-in delegate types:
+    /// 
+    /// 1.Action:
+    ///   Represents a delegate that has no return value (void).
+    ///   Used for methods that perform an action but don't return a value.
+    ///   Can accept up to 16 parameters (overloads available).
+    ///   example:
+    ///   Action<string> printMessage = (message) => Console.WriteLine(message);
+    ///   printMessage("Hello, World!");
+    /// 
+    /// 2.Func:
+    ///   Represents a delegate that takes parameters and returns a value.
+    ///   Used for methods that return a value.
+    ///   Can accept up to 16 parameters (overloads available).
+    ///   example:
+    ///   Func<int, int, int> add = (x, y) => x + y;
+    ///   int result = add(3, 4); // 7
+    ///   
+    /// 3.Predicate:
+    ///   Represents a delegate that defines a method that takes one parameter and returns a boolean value.
+    ///   Commonly used for filtering collections.
+    ///   example:
+    ///   Predicate<int> isEven = (x) => x % 2 == 0;
+    ///   bool even = isEven(6); // true
+    ///   
+    /// 
+    /// 4.Comparison:
+    ///   Represents a delegate that compares two objects of the same type.
+    ///   Useful for custom sorting or ordering of objects.
+    ///   example:
+    ///   Comparison<string> stringComparison = (x, y) => x.CompareTo(y);
+    ///   int result = stringComparison("apple", "banana"); // < 0
+    ///   
+    /// 5.Converter:
+    ///   Represents a delegate that converts one type to another.
+    ///   Often used when converting elements in collections.
+    ///   example:
+    ///   Converter<int, string> intToString = (x) => x.ToString();
+    ///   string text = intToString(42); // "42"
+    ///      
+    /// </Built_In_Delegate>
+
+    // Predicate<T>:
+    //  we could use predicate delegate without declaration.
+    class usingCondition2
+    {
+        public static List<T> findCondition<T>(List<T> list, Predicate<T> con)
+        {
+            List<T> newLst = new List<T>();
+            for (int i = 0; i < list?.Count; i++)
+                if (con?.Invoke(list[i]) == true)
+                    newLst.Add(list[i]);
+            return newLst;
+
+        }
+
+    }
+
+    //<Using lambda expression with tradnainal methods>
+    class point3D
+    {
+        int x, y, z;
+        public int X { get => x; set => x = value; }
+        public int Y { get => y; set => y = value; }
+        public int Z { get => z; set => z = value; }
+        public string ReadOnlyProp => "Mahmoud";
+
+        public point3D() => Console.WriteLine("parameterless Ctor");
+        public override string ToString() => $" x: {x},  y: {y},  z: {y}";
+    }
+
+    ///<Event>
+    ///</Event>
+    class Ball
+    {
+        public int Id { get; set; }
+
+        Location ballLocation;
+        internal Location BallLocation
+        {
+            get => ballLocation;
+            set
+            {
+                if (ballLocation != value)
+                {
+                    ballLocation = value;
+                    //4. notify subc.
+                    BallLocationChanged?.Invoke();
+                }
+            }
+        }
+        //1. Declare an event
+        public event Action BallLocationChanged;
+        public override string ToString()
+        => $"Ball {Id} @ {ballLocation}";
+    }
+    struct Location
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Z { get; set; }
+        public override string ToString()
+        {
+            return $"{X}, {Y}, {Z}";
+        }
+        public static bool operator == (Location l, Location R)
+                => l.X == R.X && l.Y == R.Y && l.Z == R.Z;
+        public static bool operator != (Location l, Location R)
+                =>  l.X != R.X || l.Y != R.Y || l.Z != R.Z;
+    }
+    // 1. subsc
+    class Player
+    {
+        public string Name { get; set; }
+        public string Team { get; set; }
+
+        // This subscriber must declare call back method that match the same signuture of event
+        public void Run()
+            => Console.WriteLine($"player {Name} running");
+        public override string ToString()
+        => $"name {Name}, Team {Team}";
+    }
+    
+    // subsc no.2
+    class Refree
+    {
+        public string Name { get; set; }
+        // declare call back method 
+        public void Look() => Console.WriteLine($"refree {Name} looking");
+        public override string ToString() => Name;
     }
 }
